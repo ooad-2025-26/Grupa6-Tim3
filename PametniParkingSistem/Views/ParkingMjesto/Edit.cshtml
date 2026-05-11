@@ -1,0 +1,64 @@
+@model PametniParkingSistem.Models.ParkingMjesto
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>ParkingMjesto</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Oznaka" class="control-label"></label>
+                <input asp-for="Oznaka" class="form-control" />
+                <span asp-validation-for="Oznaka" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Status" class="control-label"></label>
+                <select asp-for="Status" class="form-control"></select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TipMjesta" class="control-label"></label>
+                <select asp-for="TipMjesta" class="form-control"></select>
+                <span asp-validation-for="TipMjesta" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Natkriveno" /> @Html.DisplayNameFor(model => model.Natkriveno)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="UdaljenostOdUlaza" class="control-label"></label>
+                <input asp-for="UdaljenostOdUlaza" class="form-control" />
+                <span asp-validation-for="UdaljenostOdUlaza" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CijenaPoSatu" class="control-label"></label>
+                <input asp-for="CijenaPoSatu" class="form-control" />
+                <span asp-validation-for="CijenaPoSatu" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ParkingZonaId" class="control-label"></label>
+                <input asp-for="ParkingZonaId" class="form-control" />
+                <span asp-validation-for="ParkingZonaId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

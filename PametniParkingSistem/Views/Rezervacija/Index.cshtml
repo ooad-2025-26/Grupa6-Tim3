@@ -1,0 +1,89 @@
+@model IEnumerable<PametniParkingSistem.Models.Rezervacija>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DatumKreiranja)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VrijemePocetka)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VrijemeKraja)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RegistracijskeTablice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.KontaktTelefon)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EmailZaObavijest)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UkupnaCijena)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StatusRezervacije)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.KorisnikId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ParkingMjestoId)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DatumKreiranja)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.VrijemePocetka)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.VrijemeKraja)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RegistracijskeTablice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.KontaktTelefon)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EmailZaObavijest)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UkupnaCijena)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StatusRezervacije)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.KorisnikId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ParkingMjestoId)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
