@@ -1,157 +1,115 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using PametniParkingSistem.Data;
 using PametniParkingSistem.Models;
+using PametniParkingSistem.Services.Interfaces;
 
 namespace PametniParkingSistem.Controllers
 {
     public class ParkingZonaController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IParkingZonaService _service;
 
-        public ParkingZonaController(ApplicationDbContext context)
+        public ParkingZonaController(IParkingZonaService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: ParkingZona
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ParkingZone.ToListAsync());
+            return View(await _service.GetAllAsync());
         }
 
-        // GET: ParkingZona/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var parkingZona = await _context.ParkingZone
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (parkingZona == null)
-            {
-                return NotFound();
-            }
+            var parkingZona = await _service.GetByIdAsync(id.Value);
+
+            if (parkingZona == null) return NotFound();
 
             return View(parkingZona);
         }
 
-        // GET: ParkingZona/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: ParkingZona/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Naziv,Lokacija,Opis,ProsjecnaOcjena")] ParkingZona parkingZona)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(parkingZona);
-                await _context.SaveChangesAsync();
+                await _service.AddAsync(parkingZona);
                 return RedirectToAction(nameof(Index));
             }
+
             return View(parkingZona);
         }
 
-        // GET: ParkingZona/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var parkingZona = await _context.ParkingZone.FindAsync(id);
-            if (parkingZona == null)
-            {
-                return NotFound();
-            }
+            var parkingZona = await _service.GetByIdAsync(id.Value);
+
+            if (parkingZona == null) return NotFound();
+
             return View(parkingZona);
         }
 
-        // POST: ParkingZona/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Naziv,Lokacija,Opis,ProsjecnaOcjena")] ParkingZona parkingZona)
         {
-            if (id != parkingZona.Id)
-            {
-                return NotFound();
-            }
+            if (id != parkingZona.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(parkingZona);
-                    await _context.SaveChangesAsync();
+                    await _service.UpdateAsync(parkingZona);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ParkingZonaExists(parkingZona.Id))
-                    {
+                    if (!await ParkingZonaExists(parkingZona.Id))
                         return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+
+                    throw;
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(parkingZona);
         }
 
-        // GET: ParkingZona/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var parkingZona = await _context.ParkingZone
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (parkingZona == null)
-            {
-                return NotFound();
-            }
+            var parkingZona = await _service.GetByIdAsync(id.Value);
+
+            if (parkingZona == null) return NotFound();
 
             return View(parkingZona);
         }
 
-        // POST: ParkingZona/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var parkingZona = await _context.ParkingZone.FindAsync(id);
-            if (parkingZona != null)
-            {
-                _context.ParkingZone.Remove(parkingZona);
-            }
+            await _service.DeleteAsync(id);
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ParkingZonaExists(int id)
+        private async Task<bool> ParkingZonaExists(int id)
         {
-            return _context.ParkingZone.Any(e => e.Id == id);
+            return await _service.GetByIdAsync(id) != null;
         }
     }
 }

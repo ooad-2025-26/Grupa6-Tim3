@@ -1,157 +1,111 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using PametniParkingSistem.Data;
 using PametniParkingSistem.Models;
+using PametniParkingSistem.Services.Interfaces;
 
 namespace PametniParkingSistem.Controllers
 {
     public class RezervacijaController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IRezervacijaService _service;
 
-        public RezervacijaController(ApplicationDbContext context)
+        public RezervacijaController(IRezervacijaService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: Rezervacija
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Rezervacije.ToListAsync());
+            return View(await _service.GetAllAsync());
         }
 
-        // GET: Rezervacija/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var rezervacija = await _context.Rezervacije
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (rezervacija == null)
-            {
-                return NotFound();
-            }
+            var rezervacija = await _service.GetByIdAsync(id.Value);
+            if (rezervacija == null) return NotFound();
 
             return View(rezervacija);
         }
 
-        // GET: Rezervacija/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Rezervacija/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,DatumKreiranja,VrijemePocetka,VrijemeKraja,RegistracijskeTablice,KontaktTelefon,EmailZaObavijest,UkupnaCijena,StatusRezervacije,KorisnikId,ParkingMjestoId")] Rezervacija rezervacija)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(rezervacija);
-                await _context.SaveChangesAsync();
+                await _service.AddAsync(rezervacija);
                 return RedirectToAction(nameof(Index));
             }
+
             return View(rezervacija);
         }
 
-        // GET: Rezervacija/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var rezervacija = await _context.Rezervacije.FindAsync(id);
-            if (rezervacija == null)
-            {
-                return NotFound();
-            }
+            var rezervacija = await _service.GetByIdAsync(id.Value);
+            if (rezervacija == null) return NotFound();
+
             return View(rezervacija);
         }
 
-        // POST: Rezervacija/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,DatumKreiranja,VrijemePocetka,VrijemeKraja,RegistracijskeTablice,KontaktTelefon,EmailZaObavijest,UkupnaCijena,StatusRezervacije,KorisnikId,ParkingMjestoId")] Rezervacija rezervacija)
         {
-            if (id != rezervacija.Id)
-            {
-                return NotFound();
-            }
+            if (id != rezervacija.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(rezervacija);
-                    await _context.SaveChangesAsync();
+                    await _service.UpdateAsync(rezervacija);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RezervacijaExists(rezervacija.Id))
-                    {
+                    if (!await RezervacijaExists(rezervacija.Id))
                         return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+
+                    throw;
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(rezervacija);
         }
 
-        // GET: Rezervacija/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var rezervacija = await _context.Rezervacije
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (rezervacija == null)
-            {
-                return NotFound();
-            }
+            var rezervacija = await _service.GetByIdAsync(id.Value);
+            if (rezervacija == null) return NotFound();
 
             return View(rezervacija);
         }
 
-        // POST: Rezervacija/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var rezervacija = await _context.Rezervacije.FindAsync(id);
-            if (rezervacija != null)
-            {
-                _context.Rezervacije.Remove(rezervacija);
-            }
-
-            await _context.SaveChangesAsync();
+            await _service.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool RezervacijaExists(int id)
+        private async Task<bool> RezervacijaExists(int id)
         {
-            return _context.Rezervacije.Any(e => e.Id == id);
+            return await _service.GetByIdAsync(id) != null;
         }
     }
 }
