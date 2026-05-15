@@ -1,16 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PametniParkingSistem.Models;
 
 namespace PametniParkingSistem.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<Korisnik>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
 
-        public DbSet<Korisnik> Korisnici { get; set; }
         public DbSet<Rezervacija> Rezervacije { get; set; }
         public DbSet<ParkingMjesto> ParkingMjesta { get; set; }
         public DbSet<ParkingZona> ParkingZone { get; set; }
@@ -24,7 +24,6 @@ namespace PametniParkingSistem.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Korisnik>().ToTable("Korisnik");
             modelBuilder.Entity<Rezervacija>().ToTable("Rezervacija");
             modelBuilder.Entity<ParkingMjesto>().ToTable("ParkingMjesto");
             modelBuilder.Entity<ParkingZona>().ToTable("ParkingZona");

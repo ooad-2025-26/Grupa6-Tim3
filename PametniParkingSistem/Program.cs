@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PametniParkingSistem.Data;
+using PametniParkingSistem.Models;
 using PametniParkingSistem.Repositories;
 using PametniParkingSistem.Services;
 using PametniParkingSistem.Services.Interfaces;
@@ -16,7 +18,14 @@ var connectionString = baseConnectionString + $"Password={password};";
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-//repositories
+builder.Services.AddIdentity<Korisnik, IdentityRole>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+})
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
+
+// repositories
 builder.Services.AddScoped<IRezervacijaRepository, RezervacijaRepository>();
 builder.Services.AddScoped<IParkingMjestoRepository, ParkingMjestoRepository>();
 builder.Services.AddScoped<IPlacanjeRepository, PlacanjeRepository>();
@@ -26,7 +35,7 @@ builder.Services.AddScoped<ICjenovnikRepository, CjenovnikRepository>();
 builder.Services.AddScoped<IEmailObavijestRepository, EmailObavijestRepository>();
 builder.Services.AddScoped<IParkingZonaRepository, ParkingZonaRepository>();
 
-//services
+// services
 builder.Services.AddScoped<IRezervacijaService, RezervacijaService>();
 builder.Services.AddScoped<IParkingMjestoService, ParkingMjestoService>();
 builder.Services.AddScoped<IRecenzijaService, RecenzijaService>();
@@ -56,10 +65,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapRazorPages();
 
 app.Run();

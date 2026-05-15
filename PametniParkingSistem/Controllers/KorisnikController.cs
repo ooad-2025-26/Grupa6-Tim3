@@ -21,11 +21,11 @@ namespace PametniParkingSistem.Controllers
             return View(await _service.GetAllAsync());
         }
 
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(string? id)
         {
             if (id == null) return NotFound();
 
-            var korisnik = await _service.GetByIdAsync(id.Value);
+            var korisnik = await _service.GetByIdAsync(id);
 
             if (korisnik == null) return NotFound();
 
@@ -39,10 +39,12 @@ namespace PametniParkingSistem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Ime,Prezime,Email,Lozinka,Telefon,DatumRegistracije,StatusNaloga,Uloga")] Korisnik korisnik)
+        public async Task<IActionResult> Create([Bind("Id,Ime,Prezime,Email,PhoneNumber,DatumRegistracije,StatusNaloga,Uloga")] Korisnik korisnik)
         {
             if (ModelState.IsValid)
             {
+                korisnik.UserName = korisnik.Email;
+
                 await _service.AddAsync(korisnik);
                 return RedirectToAction(nameof(Index));
             }
@@ -50,11 +52,11 @@ namespace PametniParkingSistem.Controllers
             return View(korisnik);
         }
 
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string? id)
         {
             if (id == null) return NotFound();
 
-            var korisnik = await _service.GetByIdAsync(id.Value);
+            var korisnik = await _service.GetByIdAsync(id);
 
             if (korisnik == null) return NotFound();
 
@@ -63,7 +65,7 @@ namespace PametniParkingSistem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Ime,Prezime,Email,Lozinka,Telefon,DatumRegistracije,StatusNaloga,Uloga")] Korisnik korisnik)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Ime,Prezime,Email,PhoneNumber,DatumRegistracije,StatusNaloga,Uloga")] Korisnik korisnik)
         {
             if (id != korisnik.Id) return NotFound();
 
@@ -71,6 +73,8 @@ namespace PametniParkingSistem.Controllers
             {
                 try
                 {
+                    korisnik.UserName = korisnik.Email;
+
                     await _service.UpdateAsync(korisnik);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -87,11 +91,11 @@ namespace PametniParkingSistem.Controllers
             return View(korisnik);
         }
 
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(string? id)
         {
             if (id == null) return NotFound();
 
-            var korisnik = await _service.GetByIdAsync(id.Value);
+            var korisnik = await _service.GetByIdAsync(id);
 
             if (korisnik == null) return NotFound();
 
@@ -100,13 +104,13 @@ namespace PametniParkingSistem.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
             await _service.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<bool> KorisnikExists(int id)
+        private async Task<bool> KorisnikExists(string id)
         {
             return await _service.GetByIdAsync(id) != null;
         }

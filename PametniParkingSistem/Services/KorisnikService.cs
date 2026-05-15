@@ -18,7 +18,7 @@ namespace PametniParkingSistem.Services
             return await _repository.GetAllAsync();
         }
 
-        public async Task<Korisnik?> GetByIdAsync(int id)
+        public async Task<Korisnik?> GetByIdAsync(string id)
         {
             return await _repository.GetByIdAsync(id);
         }
@@ -33,7 +33,7 @@ namespace PametniParkingSistem.Services
             await _repository.UpdateAsync(korisnik);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(string id)
         {
             await _repository.DeleteAsync(id);
         }

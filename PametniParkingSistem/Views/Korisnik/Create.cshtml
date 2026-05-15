@@ -1,4 +1,5 @@
 @model PametniParkingSistem.Models.Korisnik
+@using PametniParkingSistem.Enums
 
 @{
     ViewData["Title"] = "Create";
@@ -28,14 +29,9 @@
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Lozinka" class="control-label"></label>
-                <input asp-for="Lozinka" class="form-control" />
-                <span asp-validation-for="Lozinka" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Telefon" class="control-label"></label>
-                <input asp-for="Telefon" class="form-control" />
-                <span asp-validation-for="Telefon" class="text-danger"></span>
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DatumRegistracije" class="control-label"></label>
@@ -44,12 +40,16 @@
             </div>
             <div class="form-group">
                 <label asp-for="StatusNaloga" class="control-label"></label>
-                <select asp-for="StatusNaloga" class="form-control"></select>
+                <select asp-for="StatusNaloga" class="form-control"
+                        asp-items="Html.GetEnumSelectList<StatusNaloga>()">
+                </select>
                 <span asp-validation-for="StatusNaloga" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Uloga" class="control-label"></label>
-                <select asp-for="Uloga" class="form-control"></select>
+                <select asp-for="Uloga" class="form-control"
+                        asp-items="Html.GetEnumSelectList<Uloga>()">
+                </select>
                 <span asp-validation-for="Uloga" class="text-danger"></span>
             </div>
             <div class="form-group">
