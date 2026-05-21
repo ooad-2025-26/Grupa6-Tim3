@@ -1,59 +1,161 @@
-@model IEnumerable<PametniParkingSistem.Models.Recenzija>
+﻿@model IEnumerable<PametniParkingSistem.Models.Recenzija>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Recenzije i ocjene";
+    bool jeAdminIliOperater = User.IsInRole("Administrator") || User.IsInRole("Operater");
 }
 
-<h1>Index</h1>
+<div class="page-header mb-4">
+    <h1>Recenzije i ocjene</h1>
+    <p class="text-muted">Pregled recenzija korisnika za parking mjesta.</p>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Ocjena)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Komentar)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Datum)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Obrisan)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.KorisnikId)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ocjena)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Komentar)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Datum)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Obrisan)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.KorisnikId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <i class="fa-solid fa-star"></i>
+        <h3>Nema recenzija</h3>
+        <p>Trenutno nema evidentiranih recenzija.</p>
+    </div>
 }
-    </tbody>
-</table>
+else
+{
+    <div class="reviews-list">
+        @foreach (var item in Model)
+        {
+            <div class="review-card">
+                <div class="review-header">
+                    <div>
+                        <h4>
+                            Parking mjesto:
+                            @(item.Rezervacija?.ParkingMjesto?.Oznaka ?? $"ID {item.Rezervacija?.ParkingMjestoId}")
+                        </h4>
+
+                        <p class="review-zone">
+                            Rezervacija #@item.RezervacijaId
+                        </p>
+                    </div>
+
+                    <div class="review-stars">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= item.Ocjena)
+                            {
+                                <span class="star-filled">★</span>
+                            }
+                            else
+                            {
+                                <span class="star-empty">☆</span>
+                            }
+                        }
+                    </div>
+                </div>
+
+                <hr />
+
+                @if (!string.IsNullOrWhiteSpace(item.Komentar))
+                {
+                    <p class="review-comment">
+                        @item.Komentar
+                    </p>
+                }
+                else
+                {
+                    <p class="review-comment text-muted">
+                        Korisnik nije ostavio komentar.
+                    </p>
+                }
+
+                <div class="review-footer">
+                    <span>
+                        @if (item.Korisnik != null)
+                        {
+                            @($"{item.Korisnik.Ime} {item.Korisnik.Prezime}")
+                        }
+                        else
+                        {
+                            @("Korisnik")
+                        }
+        ,
+                        @item.Datum.ToString("dd.MM.yyyy.")
+                    </span>
+
+                    @if (jeAdminIliOperater)
+                    {
+                        <form asp-action="Delete"
+                              asp-route-id="@item.Id"
+                              method="post"
+                              onsubmit="return confirm('Da li ste sigurni da želite obrisati ovu recenziju?');">
+                            @Html.AntiForgeryToken()
+
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                Obriši
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<style>
+    .reviews-list {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .review-card {
+        border: 1px solid #d1d5db;
+        background: #f8f9fa;
+        padding: 22px 26px;
+        border-radius: 4px;
+    }
+
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+        .review-header h4 {
+            margin: 0;
+            font-weight: 700;
+        }
+
+    .review-zone {
+        margin: 4px 0 0 0;
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .review-stars {
+        white-space: nowrap;
+        font-size: 26px;
+        line-height: 1;
+    }
+
+    .star-filled {
+        color: #e6e600;
+    }
+
+    .star-empty {
+        color: #d1d5db;
+    }
+
+    .review-comment {
+        margin: 0 0 18px 0;
+        color: #374151;
+    }
+
+    .review-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        color: #4b5563;
+        font-size: 14px;
+    }
+</style>

@@ -1,20 +1,14 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PametniParkingSistem.Models;
-using PametniParkingSistem.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PametniParkingSistem.Enums;
+using PametniParkingSistem.Models;
+using PametniParkingSistem.Services.Interfaces;
 using System.Text.Json;
-
-
 
 namespace PametniParkingSistem.Controllers
 {
-
-
     [Authorize]
     public class RezervacijaController : Controller
     {
@@ -43,16 +37,67 @@ namespace PametniParkingSistem.Controllers
             await AzurirajIstekleRezervacijeAsync();
 
             if (User.IsInRole("Administrator") || User.IsInRole("Operater"))
-            {
                 return View(await _service.GetAllAsync());
-            }
+
+            return RedirectToAction(nameof(Moje));
+        }
+
+        public async Task<IActionResult> Moje(string? status)
+        {
+            if (User.IsInRole("Administrator") || User.IsInRole("Operater"))
+                return RedirectToAction(nameof(Index));
+
+            await AzurirajIstekleRezervacijeAsync();
 
             var korisnik = await _userManager.GetUserAsync(User);
+            if (korisnik == null) return Unauthorized();
 
-            if (korisnik == null)
-                return Unauthorized();
+            var rezervacije = await _service.GetByKorisnikIdAsync(korisnik.Id);
 
-            return View(await _service.GetByKorisnikIdAsync(korisnik.Id));
+            rezervacije = rezervacije
+                .Where(r => r.StatusRezervacije != StatusRezervacije.Zavrsena &&
+                            r.StatusRezervacije != StatusRezervacije.Otkazana)
+                .ToList();
+
+            if (!string.IsNullOrWhiteSpace(status) &&
+                Enum.TryParse<StatusRezervacije>(status, out var parsedStatus))
+            {
+                rezervacije = rezervacije
+                    .Where(r => r.StatusRezervacije == parsedStatus)
+                    .ToList();
+            }
+
+            ViewBag.Status = status;
+            return View(rezervacije);
+        }
+
+        public async Task<IActionResult> Historija(string? status)
+        {
+            if (User.IsInRole("Administrator") || User.IsInRole("Operater"))
+                return RedirectToAction(nameof(Index));
+
+            await AzurirajIstekleRezervacijeAsync();
+
+            var korisnik = await _userManager.GetUserAsync(User);
+            if (korisnik == null) return Unauthorized();
+
+            var rezervacije = await _service.GetByKorisnikIdAsync(korisnik.Id);
+
+            rezervacije = rezervacije
+                .Where(r => r.StatusRezervacije == StatusRezervacije.Zavrsena ||
+                            r.StatusRezervacije == StatusRezervacije.Otkazana)
+                .ToList();
+
+            if (!string.IsNullOrWhiteSpace(status) &&
+                Enum.TryParse<StatusRezervacije>(status, out var parsedStatus))
+            {
+                rezervacije = rezervacije
+                    .Where(r => r.StatusRezervacije == parsedStatus)
+                    .ToList();
+            }
+
+            ViewBag.Status = status;
+            return View(rezervacije);
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -62,15 +107,27 @@ namespace PametniParkingSistem.Controllers
             var rezervacija = await _service.GetByIdAsync(id.Value);
             if (rezervacija == null) return NotFound();
 
+            if (!User.IsInRole("Administrator") && !User.IsInRole("Operater"))
+            {
+                var korisnik = await _userManager.GetUserAsync(User);
+
+                if (korisnik == null || rezervacija.KorisnikId != korisnik.Id)
+                    return Forbid();
+            }
+
             return View(rezervacija);
         }
 
         public async Task<IActionResult> Create(int parkingMjestoId)
         {
-            var parkingMjesto = await _parkingMjestoService.GetByIdAsync(parkingMjestoId);
+            if (User.IsInRole("Administrator") || User.IsInRole("Operater"))
+            {
+                TempData["Error"] = "Administrator i operater ne kreiraju lične rezervacije.";
+                return RedirectToAction(nameof(Index));
+            }
 
-            if (parkingMjesto == null)
-                return NotFound();
+            var parkingMjesto = await _parkingMjestoService.GetByIdAsync(parkingMjestoId);
+            if (parkingMjesto == null) return NotFound();
 
             var rezervacija = new Rezervacija
             {
@@ -82,7 +139,6 @@ namespace PametniParkingSistem.Controllers
             };
 
             ViewBag.ParkingMjesto = parkingMjesto;
-
             return View(rezervacija);
         }
 
@@ -90,15 +146,17 @@ namespace PametniParkingSistem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("VrijemePocetka,VrijemeKraja,RegistracijskeTablice,KontaktTelefon,EmailZaObavijest,ParkingMjestoId")] Rezervacija rezervacija)
         {
-            var korisnik = await _userManager.GetUserAsync(User);
+            if (User.IsInRole("Administrator") || User.IsInRole("Operater"))
+            {
+                TempData["Error"] = "Administrator i operater ne kreiraju lične rezervacije.";
+                return RedirectToAction(nameof(Index));
+            }
 
-            if (korisnik == null)
-                return Unauthorized();
+            var korisnik = await _userManager.GetUserAsync(User);
+            if (korisnik == null) return Unauthorized();
 
             var parkingMjesto = await _parkingMjestoService.GetByIdAsync(rezervacija.ParkingMjestoId);
-
-            if (parkingMjesto == null)
-                return NotFound();
+            if (parkingMjesto == null) return NotFound();
 
             if (rezervacija.VrijemeKraja <= rezervacija.VrijemePocetka)
             {
@@ -115,7 +173,6 @@ namespace PametniParkingSistem.Controllers
             if (!dostupno)
             {
                 TempData["Error"] = "Parking mjesto je zauzeto za odabrani termin.";
-
                 ModelState.AddModelError("", "Parking mjesto nije dostupno u odabranom terminu.");
                 ViewBag.ParkingMjesto = parkingMjesto;
                 return View(rezervacija);
@@ -124,15 +181,6 @@ namespace PametniParkingSistem.Controllers
             rezervacija.KorisnikId = korisnik.Id;
             rezervacija.DatumKreiranja = DateTime.Now;
             rezervacija.StatusRezervacije = StatusRezervacije.Kreirana;
-            rezervacija.UkupnaCijena = _service.IzracunajCijenu(
-                rezervacija.VrijemePocetka,
-                rezervacija.VrijemeKraja,
-                parkingMjesto.CijenaPoSatu);
-
-            rezervacija.KorisnikId = korisnik.Id;
-            rezervacija.DatumKreiranja = DateTime.Now;
-            rezervacija.StatusRezervacije = StatusRezervacije.Kreirana;
-
             rezervacija.UkupnaCijena = _service.IzracunajCijenu(
                 rezervacija.VrijemePocetka,
                 rezervacija.VrijemeKraja,
@@ -150,19 +198,25 @@ namespace PametniParkingSistem.Controllers
             var rezervacija = await _service.GetByIdAsync(id.Value);
             if (rezervacija == null) return NotFound();
 
+            if (!User.IsInRole("Administrator") && !User.IsInRole("Operater"))
+            {
+                var korisnik = await _userManager.GetUserAsync(User);
+
+                if (korisnik == null || rezervacija.KorisnikId != korisnik.Id)
+                    return Forbid();
+            }
+
             return View(rezervacija);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,DatumKreiranja,VrijemePocetka,VrijemeKraja,RegistracijskeTablice,KontaktTelefon,EmailZaObavijest,UkupnaCijena,StatusRezervacije,KorisnikId,ParkingMjestoId")] Rezervacija rezervacija)
         {
-            if (id != rezervacija.Id)
-                return NotFound();
+            if (id != rezervacija.Id) return NotFound();
 
             var postojecaRezervacija = await _service.GetByIdAsync(id);
-
-            if (postojecaRezervacija == null)
-                return NotFound();
+            if (postojecaRezervacija == null) return NotFound();
 
             if (!User.IsInRole("Administrator") && !User.IsInRole("Operater"))
             {
@@ -173,9 +227,7 @@ namespace PametniParkingSistem.Controllers
             }
 
             var parkingMjesto = await _parkingMjestoService.GetByIdAsync(postojecaRezervacija.ParkingMjestoId);
-
-            if (parkingMjesto == null)
-                return NotFound();
+            if (parkingMjesto == null) return NotFound();
 
             if (rezervacija.VrijemeKraja <= rezervacija.VrijemePocetka)
             {
@@ -236,7 +288,10 @@ namespace PametniParkingSistem.Controllers
                 throw;
             }
 
-            return RedirectToAction(nameof(Index));
+            if (User.IsInRole("Administrator") || User.IsInRole("Operater"))
+                return RedirectToAction(nameof(Index));
+
+            return RedirectToAction(nameof(Moje));
         }
 
         public async Task<IActionResult> Delete(int? id)
@@ -246,19 +301,6 @@ namespace PametniParkingSistem.Controllers
             var rezervacija = await _service.GetByIdAsync(id.Value);
             if (rezervacija == null) return NotFound();
 
-            return View(rezervacija);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var rezervacija = await _service.GetByIdAsync(id);
-
-            if (rezervacija == null)
-                return NotFound();
-
-            // korisnik može otkazati samo svoju rezervaciju
             if (!User.IsInRole("Administrator") && !User.IsInRole("Operater"))
             {
                 var korisnik = await _userManager.GetUserAsync(User);
@@ -267,7 +309,24 @@ namespace PametniParkingSistem.Controllers
                     return Forbid();
             }
 
-            // ne brišemo iz baze -> samo mijenjamo status
+            return View(rezervacija);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var rezervacija = await _service.GetByIdAsync(id);
+            if (rezervacija == null) return NotFound();
+
+            if (!User.IsInRole("Administrator") && !User.IsInRole("Operater"))
+            {
+                var korisnik = await _userManager.GetUserAsync(User);
+
+                if (korisnik == null || rezervacija.KorisnikId != korisnik.Id)
+                    return Forbid();
+            }
+
             rezervacija.StatusRezervacije = StatusRezervacije.Otkazana;
 
             await _service.UpdateAsync(rezervacija);
@@ -282,25 +341,31 @@ namespace PametniParkingSistem.Controllers
 
             TempData["Success"] = "Rezervacija je otkazana, a plaćanje je refundirano.";
 
-            await _emailSender.SendEmailAsync(
-                rezervacija.EmailZaObavijest,
-                "Rezervacija otkazana - Pametni Parking Sistem",
-                KreirajEmailTemplate(
-                    "Otkazivanje rezervacije",
-                    "Vaša rezervacija je otkazana",
-                    $@"
-        <p><b>Početak:</b> {rezervacija.VrijemePocetka:dd.MM.yyyy HH:mm}</p>
-        <p><b>Kraj:</b> {rezervacija.VrijemeKraja:dd.MM.yyyy HH:mm}</p>
-        <p><b>Registracijske tablice:</b> {rezervacija.RegistracijskeTablice}</p>
-        <p><b>Iznos:</b> {rezervacija.UkupnaCijena:0.00} KM</p>
-        <p><b>Status plaćanja:</b> Refundirano</p>
-        ",
-                    "Novac je evidentiran kao refundiran u sistemu."
-                )
-            );
+            if (!string.IsNullOrWhiteSpace(rezervacija.EmailZaObavijest))
+            {
+                await _emailSender.SendEmailAsync(
+                    rezervacija.EmailZaObavijest,
+                    "Rezervacija otkazana - Pametni Parking Sistem",
+                    KreirajEmailTemplate(
+                        "Otkazivanje rezervacije",
+                        "Vaša rezervacija je otkazana",
+                        $@"
+                        <p><b>Početak:</b> {rezervacija.VrijemePocetka:dd.MM.yyyy HH:mm}</p>
+                        <p><b>Kraj:</b> {rezervacija.VrijemeKraja:dd.MM.yyyy HH:mm}</p>
+                        <p><b>Registracijske tablice:</b> {rezervacija.RegistracijskeTablice}</p>
+                        <p><b>Iznos:</b> {rezervacija.UkupnaCijena:0.00} KM</p>
+                        <p><b>Status plaćanja:</b> Refundirano</p>",
+                        "Novac je evidentiran kao refundiran u sistemu."
+                    )
+                );
+            }
 
-            return RedirectToAction(nameof(Index));
+            if (User.IsInRole("Administrator") || User.IsInRole("Operater"))
+                return RedirectToAction(nameof(Index));
+
+            return RedirectToAction(nameof(Historija));
         }
+
         private async Task<bool> RezervacijaExists(int id)
         {
             return await _service.GetByIdAsync(id) != null;
@@ -320,29 +385,28 @@ namespace PametniParkingSistem.Controllers
         private string KreirajEmailTemplate(string naslov, string poruka, string sadrzaj, string footer = "Hvala što koristite Pametni Parking Sistem.")
         {
             return $@"
-    <div style='font-family:Segoe UI, Arial, sans-serif; background:#f4f8f5; padding:30px; color:#1f2937;'>
-        <div style='max-width:650px; margin:auto; background:white; border-radius:18px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.08);'>
-            
-            <div style='background:linear-gradient(90deg,#1f7a4d,#2ea86b); padding:26px; color:white;'>
-                <h1 style='margin:0; font-size:26px;'>Pametni Parking Sistem</h1>
-                <p style='margin:6px 0 0 0; opacity:0.9;'>{naslov}</p>
-            </div>
+            <div style='font-family:Segoe UI, Arial, sans-serif; background:#f4f8f5; padding:30px; color:#1f2937;'>
+                <div style='max-width:650px; margin:auto; background:white; border-radius:18px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.08);'>
+                    <div style='background:linear-gradient(90deg,#1f7a4d,#2ea86b); padding:26px; color:white;'>
+                        <h1 style='margin:0; font-size:26px;'>Pametni Parking Sistem</h1>
+                        <p style='margin:6px 0 0 0; opacity:0.9;'>{naslov}</p>
+                    </div>
 
-            <div style='padding:30px;'>
-                <h2 style='color:#166534; margin-top:0;'>{poruka}</h2>
+                    <div style='padding:30px;'>
+                        <h2 style='color:#166534; margin-top:0;'>{poruka}</h2>
 
-                <div style='background:#f8faf9; border:1px solid #e5e7eb; border-radius:14px; padding:20px; margin:20px 0;'>
-                    {sadrzaj}
+                        <div style='background:#f8faf9; border:1px solid #e5e7eb; border-radius:14px; padding:20px; margin:20px 0;'>
+                            {sadrzaj}
+                        </div>
+
+                        <p style='font-size:14px; color:#64748b;'>{footer}</p>
+                    </div>
+
+                    <div style='background:#f1f5f3; padding:18px; text-align:center; font-size:13px; color:#64748b;'>
+                        Ovo je automatska poruka. Molimo ne odgovarajte na ovaj email.
+                    </div>
                 </div>
-
-                <p style='font-size:14px; color:#64748b;'>{footer}</p>
-            </div>
-
-            <div style='background:#f1f5f3; padding:18px; text-align:center; font-size:13px; color:#64748b;'>
-                Ovo je automatska poruka. Molimo ne odgovarajte na ovaj email.
-            </div>
-        </div>
-    </div>";
+            </div>";
         }
     }
 }

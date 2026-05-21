@@ -15,17 +15,41 @@ namespace PametniParkingSistem.Repositories
 
         public async Task<List<Recenzija>> GetAllAsync()
         {
-            return await _context.Recenzije.ToListAsync();
+            return await _context.Recenzije
+                .Include(r => r.Korisnik)
+                .Include(r => r.Rezervacija)
+                    .ThenInclude(rez => rez!.ParkingMjesto)
+                .Where(r => !r.Obrisan)
+                .OrderByDescending(r => r.Datum)
+                .ToListAsync();
         }
 
         public async Task<Recenzija?> GetByIdAsync(int id)
         {
-            return await _context.Recenzije.FindAsync(id);
+            return await _context.Recenzije
+                .Include(r => r.Korisnik)
+                .Include(r => r.Rezervacija)
+                    .ThenInclude(rez => rez!.ParkingMjesto)
+                .FirstOrDefaultAsync(r => r.Id == id && !r.Obrisan);
+        }
+
+        public async Task<Recenzija?> GetByRezervacijaIdAsync(int rezervacijaId)
+        {
+            return await _context.Recenzije
+                .Include(r => r.Korisnik)
+                .Include(r => r.Rezervacija)
+                .FirstOrDefaultAsync(r => r.RezervacijaId == rezervacijaId && !r.Obrisan);
+        }
+
+        public async Task<bool> ExistsForRezervacijaAsync(int rezervacijaId)
+        {
+            return await _context.Recenzije
+                .AnyAsync(r => r.RezervacijaId == rezervacijaId && !r.Obrisan);
         }
 
         public async Task AddAsync(Recenzija recenzija)
         {
-            await _context.Recenzije.AddAsync(recenzija);
+            _context.Recenzije.Add(recenzija);
             await _context.SaveChangesAsync();
         }
 
@@ -41,7 +65,7 @@ namespace PametniParkingSistem.Repositories
 
             if (recenzija != null)
             {
-                _context.Recenzije.Remove(recenzija);
+                recenzija.Obrisan = true;
                 await _context.SaveChangesAsync();
             }
         }

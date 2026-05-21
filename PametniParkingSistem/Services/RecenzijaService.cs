@@ -23,6 +23,16 @@ namespace PametniParkingSistem.Services
             return await _repository.GetByIdAsync(id);
         }
 
+        public async Task<Recenzija?> GetByRezervacijaIdAsync(int rezervacijaId)
+        {
+            return await _repository.GetByRezervacijaIdAsync(rezervacijaId);
+        }
+
+        public async Task<bool> ExistsForRezervacijaAsync(int rezervacijaId)
+        {
+            return await _repository.ExistsForRezervacijaAsync(rezervacijaId);
+        }
+
         public async Task AddAsync(Recenzija recenzija)
         {
             await _repository.AddAsync(recenzija);

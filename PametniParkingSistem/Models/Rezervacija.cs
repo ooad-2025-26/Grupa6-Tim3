@@ -22,8 +22,11 @@ namespace PametniParkingSistem.Models
         public string KorisnikId { get; set; } = string.Empty;
         public int ParkingMjestoId { get; set; }
 
-        //Navigation properties
+        // Navigation properties
         public Korisnik? Korisnik { get; set; }
         public ParkingMjesto? ParkingMjesto { get; set; }
+
+        // Jedna rezervacija može imati jednu recenziju
+        public Recenzija? Recenzija { get; set; }
     }
 }

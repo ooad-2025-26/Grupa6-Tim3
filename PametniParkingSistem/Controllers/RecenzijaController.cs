@@ -1,20 +1,27 @@
-using System;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using PametniParkingSistem.Enums;
 using PametniParkingSistem.Models;
 using PametniParkingSistem.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 
 namespace PametniParkingSistem.Controllers
 {
+    [Authorize]
     public class RecenzijaController : Controller
     {
         private readonly IRecenzijaService _service;
+        private readonly IRezervacijaService _rezervacijaService;
+        private readonly UserManager<Korisnik> _userManager;
 
-        public RecenzijaController(IRecenzijaService service)
+        public RecenzijaController(
+            IRecenzijaService service,
+            IRezervacijaService rezervacijaService,
+            UserManager<Korisnik> userManager)
         {
             _service = service;
+            _rezervacijaService = rezervacijaService;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
@@ -32,58 +39,87 @@ namespace PametniParkingSistem.Controllers
             return View(recenzija);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create(int rezervacijaId)
         {
-            return View();
+            var korisnik = await _userManager.GetUserAsync(User);
+
+            if (korisnik == null)
+                return Unauthorized();
+
+            var rezervacija = await _rezervacijaService.GetByIdAsync(rezervacijaId);
+
+            if (rezervacija == null)
+                return NotFound();
+
+            if (rezervacija.KorisnikId != korisnik.Id)
+                return Forbid();
+
+            if (rezervacija.StatusRezervacije != StatusRezervacije.Zavrsena)
+            {
+                TempData["Error"] = "Recenziju možete ostaviti samo za završenu rezervaciju.";
+                return RedirectToAction("Details", "Rezervacija", new { id = rezervacijaId });
+            }
+
+            if (await _service.ExistsForRezervacijaAsync(rezervacijaId))
+            {
+                TempData["Error"] = "Za ovu rezervaciju već postoji recenzija.";
+                return RedirectToAction("Details", "Rezervacija", new { id = rezervacijaId });
+            }
+
+            ViewBag.RezervacijaId = rezervacijaId;
+
+            return View(new Recenzija
+            {
+                RezervacijaId = rezervacijaId,
+                Ocjena = 5
+            });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Ocjena,Komentar,Datum,Obrisan,KorisnikId")] Recenzija recenzija)
+        public async Task<IActionResult> Create(int rezervacijaId, Recenzija recenzija)
         {
-            if (ModelState.IsValid)
+            var korisnik = await _userManager.GetUserAsync(User);
+
+            if (korisnik == null)
+                return Unauthorized();
+
+            var rezervacija = await _rezervacijaService.GetByIdAsync(rezervacijaId);
+
+            if (rezervacija == null)
+                return NotFound();
+
+            if (rezervacija.KorisnikId != korisnik.Id)
+                return Forbid();
+
+            if (rezervacija.StatusRezervacije != StatusRezervacije.Zavrsena)
             {
-                await _service.AddAsync(recenzija);
-                return RedirectToAction(nameof(Index));
+                TempData["Error"] = "Recenziju možete ostaviti samo za završenu rezervaciju.";
+                return RedirectToAction("Details", "Rezervacija", new { id = rezervacijaId });
             }
 
-            return View(recenzija);
-        }
-
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var recenzija = await _service.GetByIdAsync(id.Value);
-            if (recenzija == null) return NotFound();
-
-            return View(recenzija);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Ocjena,Komentar,Datum,Obrisan,KorisnikId")] Recenzija recenzija)
-        {
-            if (id != recenzija.Id) return NotFound();
-
-            if (ModelState.IsValid)
+            if (await _service.ExistsForRezervacijaAsync(rezervacijaId))
             {
-                try
-                {
-                    await _service.UpdateAsync(recenzija);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await RecenzijaExists(recenzija.Id))
-                        return NotFound();
-
-                    throw;
-                }
-
-                return RedirectToAction(nameof(Index));
+                TempData["Error"] = "Za ovu rezervaciju već postoji recenzija.";
+                return RedirectToAction("Details", "Rezervacija", new { id = rezervacijaId });
             }
 
-            return View(recenzija);
+            if (!ModelState.IsValid)
+            {
+                ViewBag.RezervacijaId = rezervacijaId;
+                return View(recenzija);
+            }
+
+            recenzija.KorisnikId = korisnik.Id;
+            recenzija.RezervacijaId = rezervacijaId;
+            recenzija.Datum = DateTime.Now;
+            recenzija.Obrisan = false;
+
+            await _service.AddAsync(recenzija);
+
+            TempData["Success"] = "Recenzija je uspješno dodana.";
+
+            return RedirectToAction("Details", "Rezervacija", new { id = rezervacijaId });
         }
 
         public async Task<IActionResult> Delete(int? id)
@@ -100,13 +136,19 @@ namespace PametniParkingSistem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _service.DeleteAsync(id);
-            return RedirectToAction(nameof(Index));
-        }
+            var recenzija = await _service.GetByIdAsync(id);
 
-        private async Task<bool> RecenzijaExists(int id)
-        {
-            return await _service.GetByIdAsync(id) != null;
+            if (recenzija == null)
+                return NotFound();
+
+            if (!User.IsInRole("Administrator") && !User.IsInRole("Operater"))
+                return Forbid();
+
+            await _service.DeleteAsync(id);
+
+            TempData["Success"] = "Recenzija je obrisana.";
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

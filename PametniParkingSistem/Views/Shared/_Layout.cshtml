@@ -37,8 +37,8 @@
 
                         <li class="nav-item">
                             <a class="nav-link"
-                                   asp-controller="Home"
-                                   asp-action="Index">
+                               asp-controller="Home"
+                               asp-action="Index">
                                 <i class="fa-solid fa-house me-1"></i>
                                 Početna
                             </a>
@@ -46,8 +46,8 @@
 
                         <li class="nav-item">
                             <a class="nav-link"
-                                   asp-controller="ParkingMjesto"
-                                   asp-action="Index">
+                               asp-controller="ParkingMjesto"
+                               asp-action="Index">
                                 <i class="fa-solid fa-car me-1"></i>
                                 Parking mjesta
                             </a>
@@ -55,12 +55,44 @@
 
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link"
+                            if (User.IsInRole("Administrator") || User.IsInRole("Operater"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link"
                                        asp-controller="Rezervacija"
                                        asp-action="Index">
-                                    <i class="fa-solid fa-calendar-check me-1"></i>
-                                    Rezervacije
+                                        <i class="fa-solid fa-calendar-check me-1"></i>
+                                        Sve rezervacije
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                       asp-controller="Rezervacija"
+                                       asp-action="Moje">
+                                        <i class="fa-solid fa-calendar-check me-1"></i>
+                                        Moje rezervacije
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                       asp-controller="Rezervacija"
+                                       asp-action="Historija">
+                                        <i class="fa-solid fa-clock-rotate-left me-1"></i>
+                                        Historija
+                                    </a>
+                                </li>
+                            }
+
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Recenzija"
+                                   asp-action="Index">
+                                    <i class="fa-solid fa-star me-1"></i>
+                                    Recenzije
                                 </a>
                             </li>
                         }
@@ -69,8 +101,8 @@
                         {
                             <li class="nav-item">
                                 <a class="nav-link"
-                                       asp-controller="Korisnik"
-                                       asp-action="Index">
+                                   asp-controller="Korisnik"
+                                   asp-action="Index">
                                     <i class="fa-solid fa-users me-1"></i>
                                     Korisnici
                                 </a>
@@ -92,16 +124,12 @@
         {
             <div class="alert alert-success alert-dismissible fade show custom-alert shadow"
                  role="alert">
-
                 <i class="fa-solid fa-circle-check me-2"></i>
-
                 @TempData["Success"]
-
                 <button type="button"
                         class="btn-close"
                         data-bs-dismiss="alert">
                 </button>
-
             </div>
         }
 
@@ -109,16 +137,12 @@
         {
             <div class="alert alert-danger alert-dismissible fade show custom-alert shadow"
                  role="alert">
-
                 <i class="fa-solid fa-circle-exclamation me-2"></i>
-
                 @TempData["Error"]
-
                 <button type="button"
                         class="btn-close"
                         data-bs-dismiss="alert">
                 </button>
-
             </div>
         }
 
@@ -129,11 +153,9 @@
 
     <footer class="footer-custom mt-5">
         <div class="container text-center">
-
             <p class="mb-0 fw-semibold">
                 Pametni Parking Sistem © 2026
             </p>
-
         </div>
     </footer>
 

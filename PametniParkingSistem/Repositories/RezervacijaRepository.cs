@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PametniParkingSistem.Data;
 using PametniParkingSistem.Models;
+using PametniParkingSistem.Enums;
 
 namespace PametniParkingSistem.Repositories
 {
@@ -18,6 +19,8 @@ namespace PametniParkingSistem.Repositories
             return await _context.Rezervacije
                 .Include(r => r.Korisnik)
                 .Include(r => r.ParkingMjesto)
+                .Include(r => r.Recenzija)
+                .OrderByDescending(r => r.DatumKreiranja)
                 .ToListAsync();
         }
 
@@ -25,7 +28,9 @@ namespace PametniParkingSistem.Repositories
         {
             return await _context.Rezervacije
                 .Include(r => r.ParkingMjesto)
+                .Include(r => r.Recenzija)
                 .Where(r => r.KorisnikId == korisnikId)
+                .OrderByDescending(r => r.DatumKreiranja)
                 .ToListAsync();
         }
 
@@ -34,6 +39,7 @@ namespace PametniParkingSistem.Repositories
             return await _context.Rezervacije
                 .Include(r => r.Korisnik)
                 .Include(r => r.ParkingMjesto)
+                .Include(r => r.Recenzija)
                 .FirstOrDefaultAsync(r => r.Id == id);
         }
 
@@ -64,7 +70,7 @@ namespace PametniParkingSistem.Repositories
         {
             return await _context.Rezervacije.AnyAsync(r =>
                 r.ParkingMjestoId == parkingMjestoId &&
-                r.StatusRezervacije != PametniParkingSistem.Enums.StatusRezervacije.Otkazana &&
+                r.StatusRezervacije != StatusRezervacije.Otkazana &&
                 pocetak < r.VrijemeKraja &&
                 kraj > r.VrijemePocetka);
         }
@@ -75,10 +81,9 @@ namespace PametniParkingSistem.Repositories
                 .Include(r => r.ParkingMjesto)
                 .Where(r =>
                     r.VrijemeKraja < DateTime.Now &&
-                    r.StatusRezervacije != PametniParkingSistem.Enums.StatusRezervacije.Otkazana &&
-                    r.StatusRezervacije != PametniParkingSistem.Enums.StatusRezervacije.Zavrsena)
+                    r.StatusRezervacije != StatusRezervacije.Otkazana &&
+                    r.StatusRezervacije != StatusRezervacije.Zavrsena)
                 .ToListAsync();
         }
-
     }
 }

@@ -32,6 +32,23 @@ namespace PametniParkingSistem.Data
             modelBuilder.Entity<EmailObavijest>().ToTable("EmailObavijest");
             modelBuilder.Entity<Cjenovnik>().ToTable("Cjenovnik");
             modelBuilder.Entity<KriterijPretrage>().ToTable("KriterijPretrage");
+
+            modelBuilder.Entity<Recenzija>()
+                .HasOne(r => r.Rezervacija)
+                .WithOne(rz => rz.Recenzija)
+                .HasForeignKey<Recenzija>(r => r.RezervacijaId);
+
+            modelBuilder.Entity<Recenzija>()
+                .HasOne(r => r.Korisnik)
+                .WithMany()
+                .HasForeignKey(r => r.KorisnikId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Rezervacija>()
+       .HasOne(r => r.Korisnik)
+       .WithMany(k => k.Rezervacije)
+       .HasForeignKey(r => r.KorisnikId)
+       .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
