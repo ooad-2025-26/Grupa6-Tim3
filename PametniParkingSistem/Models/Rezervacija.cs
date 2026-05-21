@@ -19,7 +19,11 @@ namespace PametniParkingSistem.Models
         public StatusRezervacije StatusRezervacije { get; set; }
 
         // FK
-        public int KorisnikId { get; set; }
+        public string KorisnikId { get; set; } = string.Empty;
         public int ParkingMjestoId { get; set; }
+
+        //Navigation properties
+        public Korisnik? Korisnik { get; set; }
+        public ParkingMjesto? ParkingMjesto { get; set; }
     }
 }

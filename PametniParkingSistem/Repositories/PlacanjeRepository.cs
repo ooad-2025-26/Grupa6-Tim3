@@ -15,12 +15,16 @@ namespace PametniParkingSistem.Repositories
 
         public async Task<List<Placanje>> GetAllAsync()
         {
-            return await _context.Placanja.ToListAsync();
+            return await _context.Placanja
+                .Include(p => p.Rezervacija)
+                .ToListAsync();
         }
 
         public async Task<Placanje?> GetByIdAsync(int id)
         {
-            return await _context.Placanja.FindAsync(id);
+            return await _context.Placanja
+                .Include(p => p.Rezervacija)
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task AddAsync(Placanje placanje)
@@ -44,6 +48,21 @@ namespace PametniParkingSistem.Repositories
                 _context.Placanja.Remove(placanje);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<bool> PostojiPlacanjeZaRezervacijuAsync(int rezervacijaId)
+        {
+            return await _context.Placanja.AnyAsync(p =>
+                p.RezervacijaId == rezervacijaId &&
+                p.StatusPlacanja == PametniParkingSistem.Enums.StatusPlacanja.Uspjesno);
+        }
+
+        public async Task<Placanje?> GetUspjesnoPlacanjeZaRezervacijuAsync(int rezervacijaId)
+        {
+            return await _context.Placanja
+                .FirstOrDefaultAsync(p =>
+                    p.RezervacijaId == rezervacijaId &&
+                    p.StatusPlacanja == PametniParkingSistem.Enums.StatusPlacanja.Uspjesno);
         }
     }
 }

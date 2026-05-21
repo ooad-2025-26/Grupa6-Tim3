@@ -1,12 +1,14 @@
-using System;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PametniParkingSistem.Models;
 using PametniParkingSistem.Services.Interfaces;
+using System;
+using System.Threading.Tasks;
 
 namespace PametniParkingSistem.Controllers
 {
+    [Authorize(Roles = "Administrator")]
     public class CjenovnikController : Controller
     {
         private readonly ICjenovnikService _service;

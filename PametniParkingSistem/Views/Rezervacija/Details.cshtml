@@ -1,78 +1,166 @@
 @model PametniParkingSistem.Models.Rezervacija
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalji rezervacije";
+
+    string statusClass = "status-neutral";
+    string statusIcon = "fa-circle-info";
+    string statusText = Model.StatusRezervacije.ToString();
+
+    if (Model.StatusRezervacije.ToString() == "Aktivna")
+    {
+        statusClass = "status-active";
+        statusIcon = "fa-circle-check";
+        statusText = "Aktivna";
+    }
+    else if (Model.StatusRezervacije.ToString() == "Otkazana")
+    {
+        statusClass = "status-cancelled";
+        statusIcon = "fa-circle-xmark";
+        statusText = "Otkazana";
+    }
+    else if (Model.StatusRezervacije.ToString() == "Zavrsena")
+    {
+        statusClass = "status-finished";
+        statusIcon = "fa-flag-checkered";
+        statusText = "Završena";
+    }
+
+    var trajanje = Model.VrijemeKraja - Model.VrijemePocetka;
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>Rezervacija</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DatumKreiranja)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DatumKreiranja)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.VrijemePocetka)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.VrijemePocetka)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.VrijemeKraja)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.VrijemeKraja)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.RegistracijskeTablice)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.RegistracijskeTablice)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.KontaktTelefon)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.KontaktTelefon)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EmailZaObavijest)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EmailZaObavijest)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UkupnaCijena)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UkupnaCijena)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StatusRezervacije)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StatusRezervacije)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.KorisnikId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.KorisnikId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ParkingMjestoId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ParkingMjestoId)
-        </dd>
-    </dl>
+<div class="page-header mb-4">
+    <h1>Detalji rezervacije</h1>
+    <p class="text-muted">Pregled svih informacija o odabranoj rezervaciji.</p>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="row g-4">
+
+    <div class="col-lg-5">
+
+        <div class="reservation-detail-hero">
+
+            <div class="reservation-detail-icon">
+                <i class="fa-solid fa-calendar-check"></i>
+            </div>
+
+            <span class="reservation-status @statusClass mb-3">
+                <i class="fa-solid @statusIcon me-1"></i>
+                @statusText
+            </span>
+
+            <h2>
+                @if (Model.ParkingMjesto != null)
+                {
+                    @Model.ParkingMjesto.Oznaka
+                }
+                else
+                {
+                    @($"ID {Model.ParkingMjestoId}")
+                }
+            </h2>
+
+            <p>Rezervacija #@Model.Id</p>
+
+            <div class="hero-price">
+                @Model.UkupnaCijena.ToString("0.00") KM
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-7">
+
+        <div class="card p-4 shadow-sm">
+
+            <h4 class="mb-4">
+                <i class="fa-solid fa-receipt me-2 text-success"></i>
+                Podaci o rezervaciji
+            </h4>
+
+            <div class="detail-grid">
+
+                <div class="detail-item">
+                    <span>Datum kreiranja</span>
+                    <strong>@Model.DatumKreiranja.ToString("dd.MM.yyyy HH:mm")</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Trajanje</span>
+                    <strong>@Math.Ceiling(trajanje.TotalHours) h</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Vrijeme početka</span>
+                    <strong>@Model.VrijemePocetka.ToString("dd.MM.yyyy HH:mm")</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Vrijeme kraja</span>
+                    <strong>@Model.VrijemeKraja.ToString("dd.MM.yyyy HH:mm")</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Registracijske tablice</span>
+                    <strong>@Model.RegistracijskeTablice</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Kontakt telefon</span>
+                    <strong>@Model.KontaktTelefon</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Email za obavijest</span>
+                    <strong>@Model.EmailZaObavijest</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Status</span>
+                    <strong>@statusText</strong>
+                </div>
+
+                @if (Model.Korisnik != null)
+                {
+                    <div class="detail-item">
+                        <span>Korisnik</span>
+                        <strong>@Model.Korisnik.Ime @Model.Korisnik.Prezime</strong>
+                    </div>
+                }
+
+            </div>
+
+            <hr class="my-4" />
+
+            <div class="d-flex flex-wrap gap-2">
+
+                @if (Model.StatusRezervacije.ToString() != "Otkazana"
+                                && Model.StatusRezervacije.ToString() != "Zavrsena")
+                {
+                    <a asp-action="Edit"
+                           asp-route-id="@Model.Id"
+                           class="btn btn-warning">
+                        <i class="fa-solid fa-pen-to-square me-2"></i>
+                        Uredi
+                    </a>
+
+                    <a asp-action="Delete"
+                           asp-route-id="@Model.Id"
+                           class="btn btn-danger">
+                        <i class="fa-solid fa-ban me-2"></i>
+                        Otkaži
+                    </a>
+                }
+
+                <a asp-action="Index" class="btn btn-secondary">
+                    Nazad
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>

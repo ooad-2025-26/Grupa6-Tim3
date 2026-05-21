@@ -1,64 +1,101 @@
 @model PametniParkingSistem.Models.ParkingMjesto
+@using PametniParkingSistem.Enums
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Uredi parking mjesto";
 }
 
-<h1>Edit</h1>
+<div class="page-header mb-4">
+    <h1>Uredi parking mjesto</h1>
+    <p class="text-muted">Ažurirajte podatke o parking mjestu.</p>
+</div>
 
-<h4>ParkingMjesto</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Oznaka" class="control-label"></label>
-                <input asp-for="Oznaka" class="form-control" />
+<div class="card p-4 shadow-sm">
+    <form asp-action="Edit" method="post">
+
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <input type="hidden" asp-for="Id" />
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="Oznaka" class="form-label">Oznaka mjesta</label>
+                <input asp-for="Oznaka"
+                       class="form-control"
+                       placeholder="npr. A1, B5, VIP1" />
                 <span asp-validation-for="Oznaka" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control"></select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TipMjesta" class="control-label"></label>
-                <select asp-for="TipMjesta" class="form-control"></select>
-                <span asp-validation-for="TipMjesta" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Natkriveno" /> @Html.DisplayNameFor(model => model.Natkriveno)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="UdaljenostOdUlaza" class="control-label"></label>
-                <input asp-for="UdaljenostOdUlaza" class="form-control" />
-                <span asp-validation-for="UdaljenostOdUlaza" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CijenaPoSatu" class="control-label"></label>
-                <input asp-for="CijenaPoSatu" class="form-control" />
-                <span asp-validation-for="CijenaPoSatu" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ParkingZonaId" class="control-label"></label>
-                <input asp-for="ParkingZonaId" class="form-control" />
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="ParkingZonaId" class="form-label">Parking zona</label>
+                <select asp-for="ParkingZonaId" class="form-select">
+                    <option value="1">Zona A - najbliže ulazu</option>
+                    <option value="2">Zona B - standardna zona</option>
+                    <option value="3">Zona C - ekonomična zona</option>
+                    <option value="4">VIP zona - premium mjesta</option>
+                </select>
                 <span asp-validation-for="ParkingZonaId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="Status" class="form-label">Status mjesta</label>
+                <select asp-for="Status"
+                        class="form-select"
+                        asp-items="Html.GetEnumSelectList<StatusMjesta>()">
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+                <small class="text-muted">
+                    Status koristite samo ako je mjesto van funkcije.
+                </small>
             </div>
-        </form>
-    </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="TipMjesta" class="form-label">Tip mjesta</label>
+                <select asp-for="TipMjesta"
+                        class="form-select"
+                        asp-items="Html.GetEnumSelectList<TipMjesta>()">
+                </select>
+                <span asp-validation-for="TipMjesta" class="text-danger"></span>
+            </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+            <div class="col-md-6 mb-3">
+                <label asp-for="UdaljenostOdUlaza" class="form-label">Udaljenost od ulaza (m)</label>
+                <input asp-for="UdaljenostOdUlaza"
+                       class="form-control"
+                       placeholder="npr. 25" />
+                <span asp-validation-for="UdaljenostOdUlaza" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="CijenaPoSatu" class="form-label">Cijena po satu (KM)</label>
+                <input asp-for="CijenaPoSatu"
+                       class="form-control"
+                       placeholder="npr. 2" />
+                <span asp-validation-for="CijenaPoSatu" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-12 mb-4">
+                <div class="form-check">
+                    <input class="form-check-input" asp-for="Natkriveno" />
+                    <label class="form-check-label" asp-for="Natkriveno">
+                        Natkriveno parking mjesto
+                    </label>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-floppy-disk me-2"></i>
+                Sačuvaj izmjene
+            </button>
+
+            <a asp-action="Index" class="btn btn-secondary">
+                Nazad
+            </a>
+        </div>
+
+    </form>
+</div>

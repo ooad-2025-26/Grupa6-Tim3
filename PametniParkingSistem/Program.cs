@@ -1,10 +1,11 @@
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity; //dodajemo identity
 using Microsoft.EntityFrameworkCore;
 using PametniParkingSistem.Data;
 using PametniParkingSistem.Models;
 using PametniParkingSistem.Repositories;
 using PametniParkingSistem.Services;
 using PametniParkingSistem.Services.Interfaces;
+using PametniParkingSistem.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,12 +19,21 @@ var connectionString = baseConnectionString + $"Password={password};";
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+//AddIdentity Koristi Identity sistem sa mojom klasom Korisnik i rolama.
+
 builder.Services.AddIdentity<Korisnik, IdentityRole>(options =>
 {
+    //ne traži email potvrdu prije logina
     options.SignIn.RequireConfirmedAccount = false;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+});
 
 // repositories
 builder.Services.AddScoped<IRezervacijaRepository, RezervacijaRepository>();
@@ -44,6 +54,10 @@ builder.Services.AddScoped<IParkingZonaService, ParkingZonaService>();
 builder.Services.AddScoped<IKorisnikService, KorisnikService>();
 builder.Services.AddScoped<IEmailObavijestService, EmailObavijestService>();
 builder.Services.AddScoped<ICjenovnikService, CjenovnikService>();
+builder.Services.Configure<EmailSettings>(
+    builder.Configuration.GetSection("EmailSettings"));
+
+builder.Services.AddScoped<IEmailSenderService, EmailSenderService>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -73,5 +87,11 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await DbInitializer.SeedRolesAndAdminAsync(services);
+}
 
 app.Run();

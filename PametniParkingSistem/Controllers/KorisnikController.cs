@@ -4,9 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PametniParkingSistem.Models;
 using PametniParkingSistem.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+
+
 
 namespace PametniParkingSistem.Controllers
 {
+    [Authorize(Roles = "Administrator")]
     public class KorisnikController : Controller
     {
         private readonly IKorisnikService _service;

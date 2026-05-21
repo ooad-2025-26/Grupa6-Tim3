@@ -1,0 +1,40 @@
+﻿@model PametniParkingSistem.ViewModels.Account.LoginViewModel
+
+@{
+    ViewData["Title"] = "Prijava";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <h2 class="mb-4 text-center">Prijava</h2>
+
+        <form asp-action="Login" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Lozinka"></label>
+                <input asp-for="Lozinka" class="form-control" />
+                <span asp-validation-for="Lozinka" class="text-danger"></span>
+            </div>
+
+            <div class="form-check mb-3">
+                <input asp-for="ZapamtiMe" class="form-check-input" />
+                <label asp-for="ZapamtiMe" class="form-check-label">Zapamti me</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Prijavi se</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

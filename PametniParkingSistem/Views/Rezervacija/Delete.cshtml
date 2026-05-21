@@ -1,81 +1,44 @@
 @model PametniParkingSistem.Models.Rezervacija
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Otkazivanje rezervacije";
 }
 
-<h1>Delete</h1>
+<h1>Otkazivanje rezervacije</h1>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Rezervacija</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DatumKreiranja)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DatumKreiranja)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.VrijemePocetka)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.VrijemePocetka)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.VrijemeKraja)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.VrijemeKraja)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.RegistracijskeTablice)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.RegistracijskeTablice)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.KontaktTelefon)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.KontaktTelefon)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EmailZaObavijest)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EmailZaObavijest)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UkupnaCijena)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UkupnaCijena)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StatusRezervacije)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StatusRezervacije)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.KorisnikId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.KorisnikId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ParkingMjestoId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ParkingMjestoId)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+<div class="alert alert-warning">
+    Da li ste sigurni da želite otkazati ovu rezervaciju?
 </div>
+
+<dl class="row">
+    <dt class="col-sm-3">Vrijeme početka</dt>
+    <dd class="col-sm-9">@Model.VrijemePocetka.ToString("dd.MM.yyyy HH:mm")</dd>
+
+    <dt class="col-sm-3">Vrijeme kraja</dt>
+    <dd class="col-sm-9">@Model.VrijemeKraja.ToString("dd.MM.yyyy HH:mm")</dd>
+
+    <dt class="col-sm-3">Registracijske tablice</dt>
+    <dd class="col-sm-9">@Model.RegistracijskeTablice</dd>
+
+    <dt class="col-sm-3">Kontakt telefon</dt>
+    <dd class="col-sm-9">@Model.KontaktTelefon</dd>
+
+    <dt class="col-sm-3">Email</dt>
+    <dd class="col-sm-9">@Model.EmailZaObavijest</dd>
+
+    <dt class="col-sm-3">Ukupna cijena</dt>
+    <dd class="col-sm-9">@Model.UkupnaCijena KM</dd>
+
+    <dt class="col-sm-3">Status</dt>
+    <dd class="col-sm-9">@Model.StatusRezervacije</dd>
+
+    <dt class="col-sm-3">Parking mjesto</dt>
+    <dd class="col-sm-9">@Model.ParkingMjesto?.Oznaka</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <input type="submit" value="Otkaži rezervaciju" class="btn btn-danger" />
+    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+</form>

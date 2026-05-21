@@ -37,5 +37,31 @@ namespace PametniParkingSistem.Services
         {
             await _repository.DeleteAsync(id);
         }
+
+        public async Task<bool> ProvjeriDostupnostAsync(int parkingMjestoId, DateTime pocetak, DateTime kraj)
+        {
+            var postojiPreklapanje = await _repository.PostojiPreklapanjeTerminaAsync(parkingMjestoId, pocetak, kraj);
+            return !postojiPreklapanje;
+        }
+
+        public double IzracunajCijenu(DateTime pocetak, DateTime kraj, double cijenaPoSatu)
+        {
+            var trajanjeUSatima = (kraj - pocetak).TotalHours;
+
+            if (trajanjeUSatima <= 0)
+                return 0;
+
+            return Math.Ceiling(trajanjeUSatima) * cijenaPoSatu;
+        }
+
+        public async Task<List<Rezervacija>> GetByKorisnikIdAsync(string korisnikId)
+        {
+            return await _repository.GetByKorisnikIdAsync(korisnikId);
+        }
+
+        public async Task<List<Rezervacija>> GetIstekleAktivneRezervacijeAsync()
+        {
+            return await _repository.GetIstekleAktivneRezervacijeAsync();
+        }
     }
 }

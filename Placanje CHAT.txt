@@ -1,4 +1,4 @@
-﻿using PametniParkingSistem.Enums;
+using PametniParkingSistem.Enums;
 
 namespace PametniParkingSistem.Models
 {
@@ -19,7 +19,5 @@ namespace PametniParkingSistem.Models
 
         // FK
         public int RezervacijaId { get; set; }
-        // Navigation property
-        public Rezervacija? Rezervacija { get; set; }
     }
 }

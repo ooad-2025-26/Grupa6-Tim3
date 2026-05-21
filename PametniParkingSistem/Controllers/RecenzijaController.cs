@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PametniParkingSistem.Models;
 using PametniParkingSistem.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PametniParkingSistem.Controllers
 {

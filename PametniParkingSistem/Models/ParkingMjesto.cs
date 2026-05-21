@@ -18,5 +18,8 @@ namespace PametniParkingSistem.Models
 
         // FK
         public int ParkingZonaId { get; set; }
+
+        public ICollection<Rezervacija> Rezervacije { get; set; } = new List<Rezervacija>();
+
     }
 }

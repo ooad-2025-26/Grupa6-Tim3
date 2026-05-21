@@ -37,5 +37,15 @@ namespace PametniParkingSistem.Services
         {
             await _repository.DeleteAsync(id);
         }
+
+        public async Task<bool> PostojiPlacanjeZaRezervacijuAsync(int rezervacijaId)
+        {
+            return await _repository.PostojiPlacanjeZaRezervacijuAsync(rezervacijaId);
+        }
+
+        public async Task<Placanje?> GetUspjesnoPlacanjeZaRezervacijuAsync(int rezervacijaId)
+        {
+            return await _repository.GetUspjesnoPlacanjeZaRezervacijuAsync(rezervacijaId);
+        }
     }
 }

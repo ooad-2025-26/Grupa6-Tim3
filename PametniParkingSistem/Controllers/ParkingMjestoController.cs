@@ -1,9 +1,11 @@
-using System;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PametniParkingSistem.Enums;
 using PametniParkingSistem.Models;
 using PametniParkingSistem.Services.Interfaces;
+using System;
+using System.Threading.Tasks;
 
 namespace PametniParkingSistem.Controllers
 {
@@ -16,9 +18,35 @@ namespace PametniParkingSistem.Controllers
             _service = service;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            int? zonaId,
+            TipMjesta? tipMjesta,
+            bool? natkriveno,
+            double? minCijena,
+            double? maxCijena,
+            double? maxUdaljenost)
         {
-            return View(await _service.GetAllAsync());
+            var parkingMjesta = await _service.GetAllAsync();
+
+            if (zonaId.HasValue)
+                parkingMjesta = parkingMjesta.Where(p => p.ParkingZonaId == zonaId.Value).ToList();
+
+            if (tipMjesta.HasValue)
+                parkingMjesta = parkingMjesta.Where(p => p.TipMjesta == tipMjesta.Value).ToList();
+
+            if (natkriveno.HasValue)
+                parkingMjesta = parkingMjesta.Where(p => p.Natkriveno == natkriveno.Value).ToList();
+
+            if (minCijena.HasValue)
+                parkingMjesta = parkingMjesta.Where(p => p.CijenaPoSatu >= minCijena.Value).ToList();
+
+            if (maxCijena.HasValue)
+                parkingMjesta = parkingMjesta.Where(p => p.CijenaPoSatu <= maxCijena.Value).ToList();
+
+            if (maxUdaljenost.HasValue)
+                parkingMjesta = parkingMjesta.Where(p => p.UdaljenostOdUlaza <= maxUdaljenost.Value).ToList();
+
+            return View(parkingMjesta);
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -31,10 +59,13 @@ namespace PametniParkingSistem.Controllers
             return View(parkingMjesto);
         }
 
+        [Authorize(Roles = "Administrator,Operater")]
         public IActionResult Create()
         {
             return View();
         }
+
+        [Authorize(Roles = "Administrator,Operater")]
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -43,12 +74,14 @@ namespace PametniParkingSistem.Controllers
             if (ModelState.IsValid)
             {
                 await _service.AddAsync(parkingMjesto);
+                TempData["Success"] = "Parking mjesto je uspješno dodano.";
                 return RedirectToAction(nameof(Index));
             }
 
             return View(parkingMjesto);
         }
 
+        [Authorize(Roles = "Administrator,Operater")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -58,6 +91,8 @@ namespace PametniParkingSistem.Controllers
 
             return View(parkingMjesto);
         }
+
+        [Authorize(Roles = "Administrator,Operater")]
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -70,6 +105,7 @@ namespace PametniParkingSistem.Controllers
                 try
                 {
                     await _service.UpdateAsync(parkingMjesto);
+                    TempData["Success"] = "Parking mjesto je uspješno ažurirano.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -85,6 +121,7 @@ namespace PametniParkingSistem.Controllers
             return View(parkingMjesto);
         }
 
+        [Authorize(Roles = "Administrator,Operater")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -95,11 +132,14 @@ namespace PametniParkingSistem.Controllers
             return View(parkingMjesto);
         }
 
+        [Authorize(Roles = "Administrator,Operater")]
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _service.DeleteAsync(id);
+            TempData["Success"] = "Parking mjesto je uspješno obrisano.";
             return RedirectToAction(nameof(Index));
         }
 

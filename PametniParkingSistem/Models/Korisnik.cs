@@ -14,5 +14,7 @@ namespace PametniParkingSistem.Models
         public StatusNaloga StatusNaloga { get; set; }
 
         public Uloga Uloga { get; set; }
+
+        public ICollection<Rezervacija> Rezervacije { get; set; } = new List<Rezervacija>();
     }
 }

@@ -1,71 +1,247 @@
 @model IEnumerable<PametniParkingSistem.Models.ParkingMjesto>
+@using PametniParkingSistem.Enums
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Parking mjesta";
 }
 
-<h1>Index</h1>
+<div class="parking-page">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Oznaka)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TipMjesta)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Natkriveno)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UdaljenostOdUlaza)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CijenaPoSatu)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ParkingZonaId)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Oznaka)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TipMjesta)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Natkriveno)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UdaljenostOdUlaza)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CijenaPoSatu)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ParkingZonaId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="parking-header">
+        <h1>Parking mjesta</h1>
+        <p>Odaberite parking mjesto. Dostupnost se provjerava prema terminu rezervacije.</p>
+
+        @if (User.IsInRole("Administrator") || User.IsInRole("Operater"))
+        {
+            <a asp-action="Create" class="btn btn-primary mb-4">
+                <i class="fa-solid fa-plus me-2"></i>
+                Dodaj novo parking mjesto
+            </a>
+        }
+    </div>
+
+    <div class="filter-card mb-4">
+
+        <form asp-action="Index" method="get">
+
+            <div class="row g-3 align-items-end">
+
+                <div class="col-md-3">
+                    <label class="form-label">Zona</label>
+                    <select name="zonaId" class="form-select">
+                        <option value="">Sve zone</option>
+                        <option value="1">Zona A</option>
+                        <option value="2">Zona B</option>
+                        <option value="3">Zona C</option>
+                        <option value="4">VIP zona</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Tip mjesta</label>
+                    <select name="tipMjesta" class="form-select">
+                        <option value="">Svi tipovi</option>
+                        <option value="Standardno">Standardno</option>
+                        <option value="Invalidsko">Invalidsko</option>
+                        <option value="ElektricnoVozilo">Električno vozilo</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Natkriveno</label>
+                    <select name="natkriveno" class="form-select">
+                        <option value="">Sve</option>
+                        <option value="true">Da</option>
+                        <option value="false">Ne</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Min cijena</label>
+                    <input name="minCijena" type="number" step="0.1" class="form-control" placeholder="0" />
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Max cijena</label>
+                    <input name="maxCijena" type="number" step="0.1" class="form-control" placeholder="5" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Max udaljenost od ulaza</label>
+                    <input name="maxUdaljenost" type="number" step="1" class="form-control" placeholder="npr. 50" />
+                </div>
+
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fa-solid fa-magnifying-glass me-2"></i>
+                        Pretraži
+                    </button>
+                </div>
+
+                <div class="col-md-3">
+                    <a asp-action="Index" class="btn btn-outline-secondary w-100">
+                        Resetuj filter
+                    </a>
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    @foreach (var zona in Model.GroupBy(x => x.ParkingZonaId).OrderBy(x => x.Key))
+    {
+        string nazivZone = zona.Key switch
+        {
+            1 => "Zona A",
+            2 => "Zona B",
+            3 => "Zona C",
+            4 => "VIP zona",
+            _ => $"Zona {zona.Key}"
+        };
+
+        string opisZone = zona.Key switch
+        {
+            1 => "Najbliže ulazu",
+            2 => "Standardna zona",
+            3 => "Ekonomična zona",
+            4 => "Premium parking mjesta",
+            _ => "Parking zona"
+        };
+
+        <section class="zona-wrapper">
+
+            <div class="zona-title">
+                <h3>@nazivZone</h3>
+                <span>@opisZone</span>
+            </div>
+
+            <div class="parking-grid">
+
+                @foreach (var item in zona.OrderBy(x => x.Oznaka))
+                {
+                    string cardClass = "standard-card";
+                    string icon = "fa-square-parking";
+                    string tipText = "Standardno";
+
+                    if (item.TipMjesta == TipMjesta.Invalidsko)
+                    {
+                        cardClass = "invalid-card";
+                        icon = "fa-wheelchair";
+                        tipText = "Invalidsko";
+                    }
+                    else if (item.TipMjesta == TipMjesta.ElektricnoVozilo)
+                    {
+                        cardClass = "ev-card";
+                        icon = "fa-bolt";
+                        tipText = "Električno vozilo";
+                    }
+
+                    if (item.Oznaka.ToUpper().Contains("VIP"))
+                    {
+                        cardClass = "vip-card";
+                        icon = "fa-star";
+                        tipText = "VIP mjesto";
+                    }
+
+                    if (item.Status == StatusMjesta.VanFunkcije)
+                    {
+                        cardClass = "disabled-card";
+                    }
+
+                    <div class="parking-card @cardClass">
+
+                        <div class="parking-card-top">
+                            <i class="fa-solid @icon"></i>
+                            <span>@tipText</span>
+                        </div>
+
+                        <div class="parking-oznaka">
+                            @item.Oznaka
+                        </div>
+
+                        <div class="parking-meta">
+                            <span>
+                                <i class="fa-solid fa-money-bill-wave me-1"></i>
+                                @item.CijenaPoSatu KM/h
+                            </span>
+
+                            <span>
+                                <i class="fa-solid fa-person-walking me-1"></i>
+                                @item.UdaljenostOdUlaza m
+                            </span>
+                        </div>
+
+                        <div class="parking-features">
+                            @if (item.Natkriveno)
+                            {
+                                <span>Natkriveno</span>
+                            }
+                            else
+                            {
+                                <span>Otvoreno</span>
+                            }
+
+                            @if (item.Oznaka.ToUpper().Contains("VIP"))
+                            {
+                                <span>Premium</span>
+                            }
+                        </div>
+
+                        <div class="parking-actions">
+
+                            <a asp-action="Details"
+                                   asp-route-id="@item.Id"
+                                   class="btn btn-light btn-sm">
+                                Detalji
+                            </a>
+
+                            @if (User.Identity != null
+                                                    && User.Identity.IsAuthenticated
+                                                    && User.IsInRole("RegistrovaniKorisnik")
+                                                    && item.Status != StatusMjesta.VanFunkcije)
+                            {
+                                <a asp-controller="Rezervacija"
+                                       asp-action="Create"
+                                       asp-route-parkingMjestoId="@item.Id"
+                                       class="btn btn-success btn-sm">
+                                    Rezerviši
+                                </a>
+                            }
+
+                            @if (item.Status == StatusMjesta.VanFunkcije)
+                            {
+                                <span class="badge bg-danger">
+                                    Van funkcije
+                                </span>
+                            }
+
+                        </div>
+
+                        @if (User.IsInRole("Administrator") || User.IsInRole("Operater"))
+                        {
+                            <div class="admin-actions">
+                                <a asp-action="Edit"
+                                       asp-route-id="@item.Id"
+                                       class="btn btn-warning btn-sm">
+                                    Edit
+                                </a>
+
+                                <a asp-action="Delete"
+                                       asp-route-id="@item.Id"
+                                       class="btn btn-danger btn-sm">
+                                    Delete
+                                </a>
+                            </div>
+                        }
+
+                    </div>
+                }
+
+            </div>
+
+        </section>
+    }
+
+</div>
