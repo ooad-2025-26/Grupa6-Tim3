@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title"] = "Promijeni lozinku";
+}
+
+<div class="page-header mb-4">
+    <h1>Promijeni lozinku</h1>
+    <p class="text-muted">Ažurirajte lozinku korisničkog naloga.</p>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card p-4 shadow-sm">
+            <form asp-action="PromijeniLozinku" method="post">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label class="form-label">Trenutna lozinka</label>
+                    <input type="password" name="trenutnaLozinka" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Nova lozinka</label>
+                    <input type="password" name="novaLozinka" class="form-control" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Potvrdi novu lozinku</label>
+                    <input type="password" name="potvrdaLozinke" class="form-control" />
+                </div>
+
+                <div class="d-flex flex-wrap gap-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-key me-2"></i>
+                        Promijeni lozinku
+                    </button>
+
+                    <a asp-action="Profil" class="btn btn-secondary">
+                        Nazad
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

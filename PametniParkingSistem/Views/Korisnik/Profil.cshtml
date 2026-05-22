@@ -1,0 +1,115 @@
+﻿@using PametniParkingSistem.Enums
+@model PametniParkingSistem.Models.Korisnik
+
+@{
+    ViewData["Title"] = "Moj profil";
+}
+
+<div class="page-header mb-4">
+    <h1>Profil</h1>
+    <p class="text-muted">
+        Pregled korisničkih informacija.
+    </p>
+</div>
+
+<div class="row g-4">
+
+    <div class="col-lg-4">
+
+        <div class="parking-detail-hero">
+
+            <div class="parking-detail-icon">
+                <i class="fa-solid fa-user"></i>
+            </div>
+
+            <h2>@Model.Ime @Model.Prezime</h2>
+
+            <p>@Model.Email</p>
+
+            @if (Model.StatusNaloga == StatusNaloga.Aktivan)
+            {
+                <span class="badge bg-success">
+                    Aktivan nalog
+                </span>
+            }
+            else
+            {
+                <span class="badge bg-danger">
+                    Blokiran nalog
+                </span>
+            }
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-8">
+
+        <div class="card p-4 shadow-sm">
+
+            <h4 class="mb-4">
+                <i class="fa-solid fa-circle-info me-2 text-success"></i>
+                Informacije
+            </h4>
+
+            <div class="detail-grid">
+
+                <div class="detail-item">
+                    <span>Ime</span>
+                    <strong>@Model.Ime</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Prezime</span>
+                    <strong>@Model.Prezime</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Email</span>
+                    <strong>@Model.Email</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Telefon</span>
+                    <strong>@Model.PhoneNumber</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Datum registracije</span>
+                    <strong>@Model.DatumRegistracije.ToShortDateString()</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Broj rezervacija</span>
+                    <strong>@Model.Rezervacije.Count</strong>
+                </div>
+
+            </div>
+
+            <hr class="my-4" />
+
+            <div class="d-flex gap-2">
+
+                <a asp-action="EditProfil"
+                   class="btn btn-warning">
+
+                    <i class="fa-solid fa-pen-to-square me-2"></i>
+                    Uredi profil
+
+                </a>
+
+                <a asp-action="PromijeniLozinku"
+                   class="btn btn-primary">
+
+                    <i class="fa-solid fa-key me-2"></i>
+                    Promijeni lozinku
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

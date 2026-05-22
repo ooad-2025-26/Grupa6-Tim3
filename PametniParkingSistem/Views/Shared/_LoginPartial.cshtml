@@ -8,6 +8,17 @@
         </li>
 
         <li class="nav-item">
+            <a class="nav-link text-dark"
+               asp-controller="Korisnik"
+               asp-action="Profil">
+
+                <i class="fa-solid fa-user me-1"></i>
+                Moj profil
+
+            </a>
+        </li>
+
+        <li class="nav-item">
             <form asp-controller="Account"
                   asp-action="Logout"
                   method="post">
@@ -23,16 +34,16 @@
     {
         <li class="nav-item">
             <a class="nav-link text-dark"
-                   asp-controller="Account"
-                   asp-action="Register">
+               asp-controller="Account"
+               asp-action="Register">
                 Register
             </a>
         </li>
 
         <li class="nav-item">
             <a class="nav-link text-dark"
-                   asp-controller="Account"
-                   asp-action="Login">
+               asp-controller="Account"
+               asp-action="Login">
                 Login
             </a>
         </li>
