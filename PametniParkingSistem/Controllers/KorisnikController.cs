@@ -1,9 +1,7 @@
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using PametniParkingSistem.Models;
 using PametniParkingSistem.Services.Interfaces;
 
@@ -13,28 +11,47 @@ namespace PametniParkingSistem.Controllers
     {
         private readonly IKorisnikService _service;
         private readonly UserManager<Korisnik> _userManager;
+        private readonly IRezervacijaService _rezervacijaService;
 
         public KorisnikController(
             IKorisnikService service,
-            UserManager<Korisnik> userManager)
+            UserManager<Korisnik> userManager,
+            IRezervacijaService rezervacijaService)
         {
             _service = service;
             _userManager = userManager;
+            _rezervacijaService = rezervacijaService;
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator,Operater")]
         public async Task<IActionResult> Index()
         {
-            return View(await _service.GetAllAsync());
+            var korisnici = await _service.GetAllAsync();
+
+            if (User.IsInRole("Operater") && !User.IsInRole("Administrator"))
+            {
+                korisnici = korisnici
+                    .Where(k => k.Uloga != Enums.Uloga.Administrator)
+                    .ToList();
+            }
+
+            return View(korisnici);
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator,Operater")]
         public async Task<IActionResult> Details(string? id)
         {
             if (id == null) return NotFound();
 
             var korisnik = await _service.GetByIdAsync(id);
             if (korisnik == null) return NotFound();
+
+            if (User.IsInRole("Operater") &&
+                !User.IsInRole("Administrator") &&
+                korisnik.Uloga == Enums.Uloga.Administrator)
+            {
+                return Forbid();
+            }
 
             return View(korisnik);
         }
@@ -54,6 +71,7 @@ namespace PametniParkingSistem.Controllers
             {
                 korisnik.UserName = korisnik.Email;
                 await _service.AddAsync(korisnik);
+
                 TempData["Success"] = "Korisnik uspješno kreiran.";
                 return RedirectToAction(nameof(Index));
             }
@@ -61,7 +79,7 @@ namespace PametniParkingSistem.Controllers
             return View(korisnik);
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator,Operater")]
         public async Task<IActionResult> Edit(string? id)
         {
             if (id == null) return NotFound();
@@ -69,34 +87,36 @@ namespace PametniParkingSistem.Controllers
             var korisnik = await _service.GetByIdAsync(id);
             if (korisnik == null) return NotFound();
 
-            return View(korisnik);
-        }
-
-        [Authorize(Roles = "Administrator")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Ime,Prezime,Email,PhoneNumber,DatumRegistracije,StatusNaloga,Uloga")] Korisnik korisnik)
-        {
-            if (id != korisnik.Id) return NotFound();
-
-            if (ModelState.IsValid)
+            if (User.IsInRole("Operater") &&
+                !User.IsInRole("Administrator") &&
+                korisnik.Uloga == Enums.Uloga.Administrator)
             {
-                try
-                {
-                    korisnik.UserName = korisnik.Email;
-                    await _service.UpdateAsync(korisnik);
-                    TempData["Success"] = "Korisnik uspješno ažuriran.";
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await KorisnikExists(korisnik.Id)) return NotFound();
-                    throw;
-                }
-
-                return RedirectToAction(nameof(Index));
+                return Forbid();
             }
 
             return View(korisnik);
+        }
+
+        [Authorize(Roles = "Administrator,Operater")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string id, Enums.StatusNaloga statusNaloga)
+        {
+            var korisnik = await _service.GetByIdAsync(id);
+            if (korisnik == null) return NotFound();
+
+            if (User.IsInRole("Operater") &&
+                !User.IsInRole("Administrator") &&
+                korisnik.Uloga == Enums.Uloga.Administrator)
+            {
+                return Forbid();
+            }
+
+            korisnik.StatusNaloga = statusNaloga;
+            await _service.UpdateAsync(korisnik);
+
+            TempData["Success"] = "Status naloga je uspješno ažuriran.";
+            return RedirectToAction(nameof(Index));
         }
 
         [Authorize(Roles = "Administrator")]
@@ -116,6 +136,7 @@ namespace PametniParkingSistem.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             await _service.DeleteAsync(id);
+
             TempData["Success"] = "Korisnik obrisan.";
             return RedirectToAction(nameof(Index));
         }
@@ -128,6 +149,9 @@ namespace PametniParkingSistem.Controllers
 
             var korisnik = await _service.GetByIdAsync(userId);
             if (korisnik == null) return NotFound();
+
+            var rezervacije = await _rezervacijaService.GetByKorisnikIdAsync(userId);
+            ViewBag.BrojRezervacija = rezervacije.Count;
 
             return View(korisnik);
         }
@@ -147,7 +171,7 @@ namespace PametniParkingSistem.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditProfil(Korisnik model)
+        public async Task<IActionResult> EditProfil(Korisnik model, IFormFile? profilnaSlika)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) return Unauthorized();
@@ -160,6 +184,29 @@ namespace PametniParkingSistem.Controllers
             korisnik.Email = model.Email;
             korisnik.UserName = model.Email;
             korisnik.PhoneNumber = model.PhoneNumber;
+
+            if (profilnaSlika != null && profilnaSlika.Length > 0)
+            {
+                var folder = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "wwwroot",
+                    "uploads",
+                    "profili"
+                );
+
+                if (!Directory.Exists(folder))
+                    Directory.CreateDirectory(folder);
+
+                var fileName = $"{Guid.NewGuid()}_{profilnaSlika.FileName}";
+                var filePath = Path.Combine(folder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await profilnaSlika.CopyToAsync(stream);
+                }
+
+                korisnik.ProfilnaSlikaUrl = $"/uploads/profili/{fileName}";
+            }
 
             await _service.UpdateAsync(korisnik);
 
@@ -176,7 +223,10 @@ namespace PametniParkingSistem.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> PromijeniLozinku(string trenutnaLozinka, string novaLozinka, string potvrdaLozinke)
+        public async Task<IActionResult> PromijeniLozinku(
+            string trenutnaLozinka,
+            string novaLozinka,
+            string potvrdaLozinke)
         {
             if (novaLozinka != potvrdaLozinke)
             {
@@ -187,7 +237,11 @@ namespace PametniParkingSistem.Controllers
             var korisnik = await _userManager.GetUserAsync(User);
             if (korisnik == null) return NotFound();
 
-            var result = await _userManager.ChangePasswordAsync(korisnik, trenutnaLozinka, novaLozinka);
+            var result = await _userManager.ChangePasswordAsync(
+                korisnik,
+                trenutnaLozinka,
+                novaLozinka
+            );
 
             if (result.Succeeded)
             {
@@ -201,11 +255,18 @@ namespace PametniParkingSistem.Controllers
             return View();
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator,Operater")]
         public async Task<IActionResult> Blokiraj(string id)
         {
             var korisnik = await _service.GetByIdAsync(id);
             if (korisnik == null) return NotFound();
+
+            if (User.IsInRole("Operater") &&
+                !User.IsInRole("Administrator") &&
+                korisnik.Uloga == Enums.Uloga.Administrator)
+            {
+                return Forbid();
+            }
 
             korisnik.StatusNaloga = Enums.StatusNaloga.Blokiran;
             await _service.UpdateAsync(korisnik);
@@ -214,11 +275,18 @@ namespace PametniParkingSistem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator,Operater")]
         public async Task<IActionResult> Aktiviraj(string id)
         {
             var korisnik = await _service.GetByIdAsync(id);
             if (korisnik == null) return NotFound();
+
+            if (User.IsInRole("Operater") &&
+                !User.IsInRole("Administrator") &&
+                korisnik.Uloga == Enums.Uloga.Administrator)
+            {
+                return Forbid();
+            }
 
             korisnik.StatusNaloga = Enums.StatusNaloga.Aktivan;
             await _service.UpdateAsync(korisnik);

@@ -59,13 +59,13 @@ namespace PametniParkingSistem.Controllers
             return View(parkingMjesto);
         }
 
-        [Authorize(Roles = "Administrator,Operater")]
+        [Authorize(Roles = "Administrator")]
         public IActionResult Create()
         {
             return View();
         }
 
-        [Authorize(Roles = "Administrator,Operater")]
+        [Authorize(Roles = "Administrator")]
 
         [HttpPost]
         [ValidateAntiForgeryToken]

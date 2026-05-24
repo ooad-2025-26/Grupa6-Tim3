@@ -7,7 +7,7 @@
 
 <div class="page-header mb-4">
     <h1>Recenzije i ocjene</h1>
-    <p class="text-muted">Pregled recenzija korisnika za parking mjesta.</p>
+    <p class="text-muted">Pregled iskustava korisnika nakon završenih rezervacija.</p>
 </div>
 
 @if (!Model.Any())
@@ -20,20 +20,33 @@
 }
 else
 {
-    <div class="reviews-list">
-        @foreach (var item in Model)
-        {
-            <div class="review-card">
-                <div class="review-header">
-                    <div>
-                        <h4>
-                            Parking mjesto:
-                            @(item.Rezervacija?.ParkingMjesto?.Oznaka ?? $"ID {item.Rezervacija?.ParkingMjestoId}")
-                        </h4>
+    <div class="modern-reviews-grid">
 
-                        <p class="review-zone">
-                            Rezervacija #@item.RezervacijaId
-                        </p>
+        @foreach (var item in Model.OrderByDescending(x => x.Datum))
+        {
+            <div class="modern-review-card">
+
+                <div class="modern-review-top">
+
+                    <div class="review-user-box">
+                        <div class="review-avatar">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+
+                        <div>
+                            <h4>
+                                @if (item.Korisnik != null)
+                                {
+                                    @($"{item.Korisnik.Ime} {item.Korisnik.Prezime}")
+                                }
+                                else
+                                {
+                                    @("Korisnik")
+                                }
+                            </h4>
+
+                            <span>@item.Datum.ToString("dd.MM.yyyy.")</span>
+                        </div>
                     </div>
 
                     <div class="review-stars">
@@ -49,36 +62,40 @@ else
                             }
                         }
                     </div>
+
                 </div>
 
-                <hr />
+                <div class="review-parking-info">
+                    <div>
+                        <span>Parking mjesto</span>
+                        <strong>
+                            @(item.Rezervacija?.ParkingMjesto?.Oznaka ?? $"ID {item.Rezervacija?.ParkingMjestoId}")
+                        </strong>
+                    </div>
 
-                @if (!string.IsNullOrWhiteSpace(item.Komentar))
-                {
-                    <p class="review-comment">
-                        @item.Komentar
-                    </p>
-                }
-                else
-                {
-                    <p class="review-comment text-muted">
-                        Korisnik nije ostavio komentar.
-                    </p>
-                }
+                    <div>
+                        <span>Rezervacija</span>
+                        <strong>#@item.RezervacijaId</strong>
+                    </div>
+                </div>
 
-                <div class="review-footer">
-                    <span>
-                        @if (item.Korisnik != null)
-                        {
-                            @($"{item.Korisnik.Ime} {item.Korisnik.Prezime}")
-                        }
-                        else
-                        {
-                            @("Korisnik")
-                        }
-        ,
-                        @item.Datum.ToString("dd.MM.yyyy.")
-                    </span>
+                <div class="review-comment-box">
+                    @if (!string.IsNullOrWhiteSpace(item.Komentar))
+                    {
+                        <p>@item.Komentar</p>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Korisnik nije ostavio komentar.</p>
+                    }
+                </div>
+
+                <div class="review-footer-actions">
+
+                    <div class="review-readonly-note">
+                        <i class="fa-solid fa-circle-info me-1"></i>
+                        Recenzija nakon završene rezervacije
+                    </div>
 
                     @if (jeAdminIliOperater)
                     {
@@ -89,73 +106,16 @@ else
                             @Html.AntiForgeryToken()
 
                             <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="fa-solid fa-trash me-1"></i>
                                 Obriši
                             </button>
                         </form>
                     }
+
                 </div>
+
             </div>
         }
+
     </div>
 }
-
-<style>
-    .reviews-list {
-        display: flex;
-        flex-direction: column;
-        gap: 18px;
-    }
-
-    .review-card {
-        border: 1px solid #d1d5db;
-        background: #f8f9fa;
-        padding: 22px 26px;
-        border-radius: 4px;
-    }
-
-    .review-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 20px;
-    }
-
-        .review-header h4 {
-            margin: 0;
-            font-weight: 700;
-        }
-
-    .review-zone {
-        margin: 4px 0 0 0;
-        font-weight: 600;
-        color: #374151;
-    }
-
-    .review-stars {
-        white-space: nowrap;
-        font-size: 26px;
-        line-height: 1;
-    }
-
-    .star-filled {
-        color: #e6e600;
-    }
-
-    .star-empty {
-        color: #d1d5db;
-    }
-
-    .review-comment {
-        margin: 0 0 18px 0;
-        color: #374151;
-    }
-
-    .review-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 16px;
-        color: #4b5563;
-        font-size: 14px;
-    }
-</style>

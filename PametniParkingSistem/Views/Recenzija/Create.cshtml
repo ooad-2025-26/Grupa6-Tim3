@@ -5,91 +5,77 @@
     int rezervacijaId = ViewBag.RezervacijaId;
 }
 
-<div class="page-header mb-4">
-    <h1>Dodaj recenziju</h1>
-    <p class="text-muted">Ocijenite svoje iskustvo nakon završene rezervacije.</p>
-</div>
+<div class="review-create-page">
 
-<div class="card p-4 shadow-sm review-form-card">
-    <form asp-action="Create" method="post">
-        <input type="hidden" name="rezervacijaId" value="@rezervacijaId" />
-        <input type="hidden" asp-for="Ocjena" id="Ocjena" />
+    <div class="review-create-card">
 
-        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-        <div class="mb-3">
-            <label class="form-label fw-bold">Ocijenite:</label>
-
-            <div class="star-rating" id="starRating">
-                <button type="button" class="star-btn" data-value="1">★</button>
-                <button type="button" class="star-btn" data-value="2">★</button>
-                <button type="button" class="star-btn" data-value="3">★</button>
-                <button type="button" class="star-btn" data-value="4">★</button>
-                <button type="button" class="star-btn" data-value="5">★</button>
-            </div>
-
-            <span asp-validation-for="Ocjena" class="text-danger"></span>
+        <div class="review-create-icon">
+            <i class="fa-solid fa-star"></i>
         </div>
 
-        <div class="mb-3">
-            <label asp-for="Komentar" class="form-label fw-bold">Komentar</label>
-            <textarea asp-for="Komentar"
-                      class="form-control"
-                      rows="5"
-                      placeholder="Napišite komentar ako želite..."></textarea>
-        </div>
-
-        <p class="text-muted small">
-            Komentar nije obavezan. Možete poslati samo ocjenu.
+        <h1>Dodaj recenziju</h1>
+        <p class="text-muted">
+            Ocijenite svoje iskustvo nakon završene rezervacije.
         </p>
 
-        <div class="d-flex gap-2 justify-content-end">
-            <a asp-controller="Rezervacija"
-               asp-action="Details"
-               asp-route-id="@rezervacijaId"
-               class="btn btn-danger">
-                Odustani
-            </a>
+        <form asp-action="Create" method="post">
 
-            <button type="submit" class="btn btn-success">
-                Pošalji recenziju
-            </button>
-        </div>
-    </form>
+            <input type="hidden" name="rezervacijaId" value="@rezervacijaId" />
+            <input type="hidden" asp-for="Ocjena" id="Ocjena" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="review-rating-section">
+                <label class="form-label fw-bold">Vaša ocjena</label>
+
+                <div class="star-rating" id="starRating">
+                    <button type="button" class="star-btn" data-value="1">★</button>
+                    <button type="button" class="star-btn" data-value="2">★</button>
+                    <button type="button" class="star-btn" data-value="3">★</button>
+                    <button type="button" class="star-btn" data-value="4">★</button>
+                    <button type="button" class="star-btn" data-value="5">★</button>
+                </div>
+
+                <span asp-validation-for="Ocjena" class="text-danger"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Komentar" class="form-label fw-bold">
+                    Komentar
+                </label>
+
+                <textarea asp-for="Komentar"
+                          class="form-control review-textarea"
+                          rows="5"
+                          placeholder="Napišite komentar..."></textarea>
+            </div>
+
+            <div class="review-create-note">
+                <i class="fa-solid fa-circle-info me-2"></i>
+                Vaša recenzija će biti vidljiva svim korisnicima sistema.
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 justify-content-end mt-4">
+
+                <a asp-controller="Rezervacija"
+                       asp-action="Details"
+                       asp-route-id="@rezervacijaId"
+                       class="btn btn-secondary">
+                    Odustani
+                </a>
+
+                <button type="submit" class="btn btn-success">
+                    <i class="fa-solid fa-paper-plane me-2"></i>
+                    Pošalji recenziju
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
 </div>
-
-<style>
-    .review-form-card {
-        max-width: 650px;
-        margin: 0 auto;
-    }
-
-    .star-rating {
-        display: flex;
-        gap: 6px;
-        margin-top: 8px;
-        margin-bottom: 6px;
-    }
-
-    .star-btn {
-        border: none;
-        background: transparent;
-        font-size: 38px;
-        line-height: 1;
-        color: #d1d5db;
-        cursor: pointer;
-        transition: transform 0.15s ease, color 0.15s ease;
-        padding: 0;
-    }
-
-        .star-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .star-btn.active {
-            color: #e6e600;
-        }
-</style>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {

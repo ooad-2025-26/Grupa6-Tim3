@@ -1,71 +1,113 @@
 @model IEnumerable<PametniParkingSistem.Models.Korisnik>
+@using PametniParkingSistem.Enums
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Korisnici";
+
+    bool jeAdmin = User.IsInRole("Administrator");
+    bool jeOperater = User.IsInRole("Operater") && !jeAdmin;
+
+    var korisnici = Model.Where(k => k.Uloga == Uloga.RegistrovaniKorisnik).ToList();
+    var operateri = Model.Where(k => k.Uloga == Uloga.Operater).ToList();
+    var administratori = Model.Where(k => k.Uloga == Uloga.Administrator).ToList();
 }
 
-<h1>Index</h1>
+<div class="users-page">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Ime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Prezime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PhoneNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DatumRegistracije)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StatusNaloga)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Uloga)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Prezime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PhoneNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DatumRegistracije)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StatusNaloga)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Uloga)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="users-hero">
+        <div>
+            <span class="users-badge">
+                <i class="fa-solid fa-users me-2"></i>
+                Upravljanje korisnicima
+            </span>
+
+            <h1>Korisnici sistema</h1>
+
+            <p>
+                Pregled korisnika, operatera i statusa naloga u Pametnom Parking Sistemu.
+            </p>
+        </div>
+    </div>
+
+    <div class="users-stats-grid">
+
+        <div class="users-stat-card green">
+            <i class="fa-solid fa-user"></i>
+            <span>Registrovani korisnici</span>
+            <strong>@korisnici.Count</strong>
+        </div>
+
+        <div class="users-stat-card blue">
+            <i class="fa-solid fa-headset"></i>
+            <span>Operateri</span>
+            <strong>@operateri.Count</strong>
+        </div>
+
+        @if (jeAdmin)
+        {
+            <div class="users-stat-card dark">
+                <i class="fa-solid fa-user-shield"></i>
+                <span>Administratori</span>
+                <strong>@administratori.Count</strong>
+            </div>
+        }
+
+    </div>
+
+    <div class="users-tabs">
+        <a href="#korisnici" class="users-tab active">
+            <i class="fa-solid fa-user me-2"></i>
+            Korisnici
+        </a>
+
+        <a href="#operateri" class="users-tab">
+            <i class="fa-solid fa-headset me-2"></i>
+            Operateri
+        </a>
+
+        @if (jeAdmin)
+        {
+            <a href="#administratori" class="users-tab">
+                <i class="fa-solid fa-user-shield me-2"></i>
+                Administratori
+            </a>
+        }
+    </div>
+
+    <section id="korisnici" class="users-section">
+        <h2>Registrovani korisnici</h2>
+
+        <div class="users-grid">
+            @foreach (var item in korisnici)
+            {
+                @await Html.PartialAsync("_KorisnikCard", item)
+            }
+        </div>
+    </section>
+
+    <section id="operateri" class="users-section">
+        <h2>Operateri</h2>
+
+        <div class="users-grid">
+            @foreach (var item in operateri)
+            {
+                @await Html.PartialAsync("_KorisnikCard", item)
+            }
+        </div>
+    </section>
+
+    @if (jeAdmin)
+    {
+        <section id="administratori" class="users-section">
+            <h2>Administratori</h2>
+
+            <div class="users-grid">
+                @foreach (var item in administratori)
+                {
+                    @await Html.PartialAsync("_KorisnikCard", item)
+                }
+            </div>
+        </section>
+    }
+
+</div>

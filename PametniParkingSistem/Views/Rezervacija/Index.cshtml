@@ -8,11 +8,33 @@
 <div class="page-header mb-4">
     <h1>Rezervacije</h1>
     <p class="text-muted">Pregled aktivnih, završenih i otkazanih rezervacija.</p>
+</div>
 
-    <a asp-controller="ParkingMjesto" asp-action="Index" class="btn btn-primary">
-        <i class="fa-solid fa-plus me-2"></i>
-        Kreiraj novu rezervaciju
+<div class="reservation-tabs mb-4">
+
+    <a asp-action="Index"
+           class="reservation-tab @(ViewBag.Status == null ? "active" : "")">
+        Sve rezervacije
     </a>
+
+    <a asp-action="Index"
+           asp-route-status="Aktivne"
+           class="reservation-tab @(ViewBag.Status == "Aktivne" ? "active" : "")">
+        Aktivne
+    </a>
+
+    <a asp-action="Index"
+           asp-route-status="Zavrsene"
+           class="reservation-tab @(ViewBag.Status == "Zavrsene" ? "active" : "")">
+        Završene
+    </a>
+
+    <a asp-action="Index"
+           asp-route-status="Otkazane"
+           class="reservation-tab @(ViewBag.Status == "Otkazane" ? "active" : "")">
+        Otkazane
+    </a>
+
 </div>
 
 @if (!Model.Any())
@@ -31,7 +53,7 @@ else
 {
     <div class="reservation-grid">
 
-        @foreach (var item in Model.OrderByDescending(x => x.DatumKreiranja))
+        @foreach (var item in Model)
         {
             string statusClass = "status-neutral";
             string statusIcon = "fa-circle-info";
@@ -158,8 +180,7 @@ else
                         Detalji
                     </a>
 
-                    @if (item.StatusRezervacije.ToString() != "Otkazana"
-                                    && item.StatusRezervacije.ToString() != "Zavrsena")
+                    @if (item.StatusRezervacije.ToString() == "Aktivna")
                     {
                         <a asp-action="Edit"
                                asp-route-id="@item.Id"

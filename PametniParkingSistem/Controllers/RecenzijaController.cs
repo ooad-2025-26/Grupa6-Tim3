@@ -24,6 +24,7 @@ namespace PametniParkingSistem.Controllers
             _userManager = userManager;
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             return View(await _service.GetAllAsync());
@@ -122,6 +123,7 @@ namespace PametniParkingSistem.Controllers
             return RedirectToAction("Details", "Rezervacija", new { id = rezervacijaId });
         }
 
+        [Authorize(Roles = "Administrator,Operater")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();

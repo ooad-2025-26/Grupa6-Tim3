@@ -11,7 +11,7 @@
         <h1>Parking mjesta</h1>
         <p>Odaberite parking mjesto. Dostupnost se provjerava prema terminu rezervacije.</p>
 
-        @if (User.IsInRole("Administrator") || User.IsInRole("Operater"))
+        @if (User.IsInRole("Administrator"))
         {
             <a asp-action="Create" class="btn btn-primary mb-4">
                 <i class="fa-solid fa-plus me-2"></i>
@@ -20,74 +20,135 @@
         }
     </div>
 
-    <div class="filter-card mb-4">
+    <div class="filter-section-bg">
+    <div class="parking-filter-wrapper">
+
+        <div class="parking-filter-header">
+            <div>
+                <h3>Pretraži parking mjesta</h3>
+                <p>Filtrirajte mjesta prema zoni, tipu, natkrivenosti, cijeni i udaljenosti.</p>
+            </div>
+
+            <div class="filter-badge">
+                <i class="fa-solid fa-sliders"></i>
+                Pametni filteri
+            </div>
+        </div>
 
         <form asp-action="Index" method="get">
 
-            <div class="row g-3 align-items-end">
+            <div class="modern-filter-grid">
 
-                <div class="col-md-3">
-                    <label class="form-label">Zona</label>
-                    <select name="zonaId" class="form-select">
-                        <option value="">Sve zone</option>
-                        <option value="1">Zona A</option>
-                        <option value="2">Zona B</option>
-                        <option value="3">Zona C</option>
-                        <option value="4">VIP zona</option>
-                    </select>
+                <div class="modern-input-group">
+                    <label>Zona</label>
+
+                    <div class="input-icon">
+                        <i class="fa-solid fa-location-dot"></i>
+
+                        <select name="zonaId" class="modern-input">
+                            <option value="">Sve zone</option>
+                            <option value="1">Zona A</option>
+                            <option value="2">Zona B</option>
+                            <option value="3">Zona C</option>
+                            <option value="4">VIP zona</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="col-md-3">
-                    <label class="form-label">Tip mjesta</label>
-                    <select name="tipMjesta" class="form-select">
-                        <option value="">Svi tipovi</option>
-                        <option value="Standardno">Standardno</option>
-                        <option value="Invalidsko">Invalidsko</option>
-                        <option value="ElektricnoVozilo">Električno vozilo</option>
-                    </select>
+                <div class="modern-input-group">
+                    <label>Tip mjesta</label>
+
+                    <div class="input-icon">
+                        <i class="fa-solid fa-car"></i>
+
+                        <select name="tipMjesta" class="modern-input">
+                            <option value="">Svi tipovi</option>
+                            <option value="Standardno">Standardno</option>
+                            <option value="Invalidsko">Invalidsko</option>
+                            <option value="ElektricnoVozilo">Električno vozilo</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="col-md-2">
-                    <label class="form-label">Natkriveno</label>
-                    <select name="natkriveno" class="form-select">
-                        <option value="">Sve</option>
-                        <option value="true">Da</option>
-                        <option value="false">Ne</option>
-                    </select>
+                <div class="modern-input-group">
+                    <label>Natkriveno</label>
+
+                    <div class="input-icon">
+                        <i class="fa-solid fa-warehouse"></i>
+
+                        <select name="natkriveno" class="modern-input">
+                            <option value="">Sve</option>
+                            <option value="true">Da</option>
+                            <option value="false">Ne</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="col-md-2">
-                    <label class="form-label">Min cijena</label>
-                    <input name="minCijena" type="number" step="0.1" class="form-control" placeholder="0" />
+                <div class="modern-input-group">
+                    <label>Max udaljenost</label>
+
+                    <div class="input-icon">
+                        <i class="fa-solid fa-person-walking"></i>
+
+                        <input name="maxUdaljenost"
+                               type="number"
+                               step="1"
+                               class="modern-input"
+                               placeholder="npr. 50" />
+                    </div>
                 </div>
 
-                <div class="col-md-2">
-                    <label class="form-label">Max cijena</label>
-                    <input name="maxCijena" type="number" step="0.1" class="form-control" placeholder="5" />
+            </div>
+
+            <div class="filter-bottom-actions">
+
+                <div class="price-row">
+
+                    <div class="price-box">
+                        <label>Min cijena</label>
+                        <div class="input-icon">
+                            <i class="fa-solid fa-money-bill-wave"></i>
+                            <input name="minCijena"
+                                   type="number"
+                                   step="0.1"
+                                   class="modern-input"
+                                   placeholder="0" />
+                        </div>
+                    </div>
+
+                    <div class="price-box">
+                        <label>Max cijena</label>
+                        <div class="input-icon">
+                            <i class="fa-solid fa-money-bill-wave"></i>
+                            <input name="maxCijena"
+                                   type="number"
+                                   step="0.1"
+                                   class="modern-input"
+                                   placeholder="5" />
+                        </div>
+                    </div>
+
                 </div>
 
-                <div class="col-md-3">
-                    <label class="form-label">Max udaljenost od ulaza</label>
-                    <input name="maxUdaljenost" type="number" step="1" class="form-control" placeholder="npr. 50" />
-                </div>
 
-                <div class="col-md-3">
-                    <button type="submit" class="btn btn-success w-100">
-                        <i class="fa-solid fa-magnifying-glass me-2"></i>
+                <div class="filter-buttons">
+
+                    <button type="submit" class="search-btn-modern">
+                        <i class="fa-solid fa-magnifying-glass"></i>
                         Pretraži
                     </button>
-                </div>
 
-                <div class="col-md-3">
-                    <a asp-action="Index" class="btn btn-outline-secondary w-100">
+                    <a asp-action="Index" class="reset-btn-modern">
                         Resetuj filter
                     </a>
+
                 </div>
 
             </div>
 
         </form>
 
+    </div>
     </div>
 
     @foreach (var zona in Model.GroupBy(x => x.ParkingZonaId).OrderBy(x => x.Key))
@@ -217,6 +278,14 @@
                                 </span>
                             }
 
+                            @if (item.Status == StatusMjesta.VanFunkcije)
+                            {
+                                <div class="parking-out-service">
+                                    <i class="fa-solid fa-circle-exclamation me-2"></i>
+                                    Ovo parking mjesto trenutno nije u funkciji
+                                </div>
+                            }
+
                         </div>
 
                         @if (User.IsInRole("Administrator") || User.IsInRole("Operater"))
@@ -225,14 +294,19 @@
                                 <a asp-action="Edit"
                                        asp-route-id="@item.Id"
                                        class="btn btn-warning btn-sm">
-                                    Edit
+                                    <i class="fa-solid fa-pen-to-square me-1"></i>
+                                    Uredi status
                                 </a>
 
-                                <a asp-action="Delete"
-                                       asp-route-id="@item.Id"
-                                       class="btn btn-danger btn-sm">
-                                    Delete
-                                </a>
+                                @if (User.IsInRole("Administrator"))
+                                {
+                                    <a asp-action="Delete"
+                                           asp-route-id="@item.Id"
+                                           class="btn btn-danger btn-sm">
+                                        <i class="fa-solid fa-trash me-1"></i>
+                                        Obriši
+                                    </a>
+                                }
                             </div>
                         }
 

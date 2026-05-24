@@ -4,48 +4,75 @@
     ViewData["Title"] = "Uredi profil";
 }
 
-<div class="page-header mb-4">
-    <h1>Uredi profil</h1>
-    <p class="text-muted">Ažurirajte vaše korisničke podatke.</p>
-</div>
+<div class="edit-profile-page">
 
-<div class="card p-4 shadow-sm">
-    <form asp-action="EditProfil" method="post">
+    <div class="edit-profile-card">
 
-        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label asp-for="Ime" class="form-label"></label>
-                <input asp-for="Ime" class="form-control" />
+        <div class="edit-profile-header">
+            <div>
+                <h1>Uredi profil</h1>
+                <p>Ažurirajte podatke i dodajte profilnu sliku.</p>
             </div>
 
-            <div class="col-md-6 mb-3">
-                <label asp-for="Prezime" class="form-label"></label>
-                <input asp-for="Prezime" class="form-control" />
-            </div>
-
-            <div class="col-md-6 mb-3">
-                <label asp-for="Email" class="form-label"></label>
-                <input asp-for="Email" class="form-control" />
-            </div>
-
-            <div class="col-md-6 mb-4">
-                <label asp-for="PhoneNumber" class="form-label">Telefon</label>
-                <input asp-for="PhoneNumber" class="form-control" />
+            <div class="edit-profile-avatar">
+                @if (!string.IsNullOrWhiteSpace(Model.ProfilnaSlikaUrl))
+                {
+                    <img src="@Model.ProfilnaSlikaUrl" alt="Profilna slika" />
+                }
+                else
+                {
+                    <i class="fa-solid fa-user"></i>
+                }
             </div>
         </div>
 
-        <div class="d-flex flex-wrap gap-3">
-            <button type="submit" class="btn btn-primary">
-                <i class="fa-solid fa-floppy-disk me-2"></i>
-                Sačuvaj izmjene
-            </button>
+        <form asp-action="EditProfil" method="post" enctype="multipart/form-data">
 
-            <a asp-action="Profil" class="btn btn-secondary">
-                Nazad
-            </a>
-        </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-    </form>
+            <div class="mb-4">
+                <label class="form-label fw-bold">Profilna slika</label>
+                <input type="file" name="profilnaSlika" class="form-control" accept="image/*" />
+                <small class="text-muted">Možete dodati JPG, PNG ili WEBP sliku.</small>
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Ime" class="form-label"></label>
+                    <input asp-for="Ime" class="form-control" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Prezime" class="form-label"></label>
+                    <input asp-for="Prezime" class="form-control" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <label asp-for="PhoneNumber" class="form-label">Telefon</label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                </div>
+
+            </div>
+
+            <div class="d-flex flex-wrap gap-3">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-floppy-disk me-2"></i>
+                    Sačuvaj izmjene
+                </button>
+
+                <a asp-action="Profil" class="btn btn-secondary">
+                    Nazad
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
 </div>

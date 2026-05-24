@@ -32,14 +32,44 @@ namespace PametniParkingSistem.Controllers
             _emailSender = emailSender;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? status)
         {
             await AzurirajIstekleRezervacijeAsync();
 
-            if (User.IsInRole("Administrator") || User.IsInRole("Operater"))
-                return View(await _service.GetAllAsync());
+            if (!User.IsInRole("Administrator") && !User.IsInRole("Operater"))
+                return RedirectToAction(nameof(Moje));
 
-            return RedirectToAction(nameof(Moje));
+            var rezervacije = await _service.GetAllAsync();
+
+            if (status == "Aktivne")
+            {
+                rezervacije = rezervacije
+                    .Where(r => r.StatusRezervacije == StatusRezervacije.Aktivna ||
+                                r.StatusRezervacije == StatusRezervacije.Produzena ||
+                                r.StatusRezervacije == StatusRezervacije.Kreirana)
+                    .ToList();
+            }
+            else if (status == "Zavrsene")
+            {
+                rezervacije = rezervacije
+                    .Where(r => r.StatusRezervacije == StatusRezervacije.Zavrsena)
+                    .ToList();
+            }
+            else if (status == "Otkazane")
+            {
+                rezervacije = rezervacije
+                    .Where(r => r.StatusRezervacije == StatusRezervacije.Otkazana)
+                    .ToList();
+            }
+
+            rezervacije = rezervacije
+                .OrderByDescending(r => r.DatumKreiranja)
+                .ToList();
+
+            ViewBag.Status = status;
+            ViewBag.Naslov = "Rezervacije";
+
+            return View(rezervacije);
         }
 
         public async Task<IActionResult> Moje(string? status)
@@ -54,20 +84,34 @@ namespace PametniParkingSistem.Controllers
 
             var rezervacije = await _service.GetByKorisnikIdAsync(korisnik.Id);
 
-            rezervacije = rezervacije
-                .Where(r => r.StatusRezervacije != StatusRezervacije.Zavrsena &&
-                            r.StatusRezervacije != StatusRezervacije.Otkazana)
-                .ToList();
-
-            if (!string.IsNullOrWhiteSpace(status) &&
-                Enum.TryParse<StatusRezervacije>(status, out var parsedStatus))
+            if (status == "Aktivne")
             {
                 rezervacije = rezervacije
-                    .Where(r => r.StatusRezervacije == parsedStatus)
+                    .Where(r => r.StatusRezervacije == StatusRezervacije.Aktivna ||
+                                r.StatusRezervacije == StatusRezervacije.Produzena ||
+                                r.StatusRezervacije == StatusRezervacije.Kreirana)
+                    .ToList();
+            }
+            else if (status == "Zavrsene")
+            {
+                rezervacije = rezervacije
+                    .Where(r => r.StatusRezervacije == StatusRezervacije.Zavrsena)
+                    .ToList();
+            }
+            else if (status == "Otkazane")
+            {
+                rezervacije = rezervacije
+                    .Where(r => r.StatusRezervacije == StatusRezervacije.Otkazana)
                     .ToList();
             }
 
+            rezervacije = rezervacije
+                .OrderByDescending(r => r.DatumKreiranja)
+                .ToList();
+
             ViewBag.Status = status;
+            ViewBag.Naslov = "Moje rezervacije";
+
             return View(rezervacije);
         }
 
@@ -363,7 +407,7 @@ namespace PametniParkingSistem.Controllers
             if (User.IsInRole("Administrator") || User.IsInRole("Operater"))
                 return RedirectToAction(nameof(Index));
 
-            return RedirectToAction(nameof(Historija));
+            return RedirectToAction(nameof(Moje));
         }
 
         private async Task<bool> RezervacijaExists(int id)

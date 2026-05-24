@@ -15,6 +15,8 @@ namespace PametniParkingSistem.Models
 
         public Uloga Uloga { get; set; }
 
+        public string? ProfilnaSlikaUrl { get; set; }
+
         public ICollection<Rezervacija> Rezervacije { get; set; } = new List<Rezervacija>();
     }
 }
