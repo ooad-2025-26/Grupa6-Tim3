@@ -100,7 +100,7 @@ namespace PametniParkingSistem.Controllers
         [Authorize(Roles = "Administrator,Operater")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, Enums.StatusNaloga statusNaloga)
+        public async Task<IActionResult> Edit(string id, Enums.StatusNaloga statusNaloga, Enums.Uloga? uloga)
         {
             var korisnik = await _service.GetByIdAsync(id);
             if (korisnik == null) return NotFound();
@@ -113,9 +113,20 @@ namespace PametniParkingSistem.Controllers
             }
 
             korisnik.StatusNaloga = statusNaloga;
+
+            if (User.IsInRole("Administrator") && uloga.HasValue)
+            {
+                korisnik.Uloga = uloga.Value;
+
+                var trenutneRole = await _userManager.GetRolesAsync(korisnik);
+                await _userManager.RemoveFromRolesAsync(korisnik, trenutneRole);
+
+                await _userManager.AddToRoleAsync(korisnik, uloga.Value.ToString());
+            }
+
             await _service.UpdateAsync(korisnik);
 
-            TempData["Success"] = "Status naloga je uspješno ažuriran.";
+            TempData["Success"] = "Podaci naloga su uspješno ažurirani.";
             return RedirectToAction(nameof(Index));
         }
 

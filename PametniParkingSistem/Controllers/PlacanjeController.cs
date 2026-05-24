@@ -148,6 +148,12 @@ namespace PametniParkingSistem.Controllers
 
                 var parkingMjesto = await _parkingMjestoService.GetByIdAsync(rezervacija.ParkingMjestoId);
 
+                var qrText = $"REZERVACIJA-{rezervacija.Id}-{parkingMjesto?.Oznaka}-{rezervacija.RegistracijskeTablice}";
+
+                var qrUrl =
+      "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data="
+      + Uri.EscapeDataString(qrText);
+
                 await _emailSender.SendEmailAsync(
                     rezervacija.EmailZaObavijest,
                     "Potvrda rezervacije - Pametni Parking Sistem",
@@ -161,6 +167,15 @@ namespace PametniParkingSistem.Controllers
         <p><b>Registracijske tablice:</b> {rezervacija.RegistracijskeTablice}</p>
         <p><b>Iznos plaćanja:</b> {rezervacija.UkupnaCijena:0.00} KM</p>
         <p><b>Transakcijski broj:</b> {placanje.TransakcijskiBroj}</p>
+<hr />
+<h3 style='color:#166534;'>QR kod za ulazak</h3>
+<p>Prilikom dolaska na parking pokažite ovaj QR kod operateru.</p>
+<div style='text-align:center; margin-top:15px;'>
+    <img src='{qrUrl}' alt='QR kod rezervacije' width='220' height='220' />
+</div>
+<p style='font-size:13px; color:#64748b; text-align:center;'>
+    Kod rezervacije: {qrText}
+</p>
         "
                     )
                 );
