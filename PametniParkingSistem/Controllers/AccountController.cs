@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using PametniParkingSistem.Enums;
 using PametniParkingSistem.Models;
 using PametniParkingSistem.ViewModels.Account;
-using PametniParkingSistem.Enums;
 
 namespace PametniParkingSistem.Controllers
 {//upravljam registracijom, loginom, pristupom, logoutom
@@ -44,7 +43,7 @@ namespace PametniParkingSistem.Controllers
                 EmailConfirmed = true,
                 DatumRegistracije = DateTime.Now,
                 StatusNaloga = StatusNaloga.Aktivan,
-                Uloga = model.Uloga
+                Uloga = Uloga.RegistrovaniKorisnik
             };
 
             //kreiranje k, pass
@@ -53,8 +52,8 @@ namespace PametniParkingSistem.Controllers
             if (result.Succeeded)
             {
                 //dodjeljuje 
-                await _userManager.AddToRoleAsync(korisnik, model.Uloga.ToString());
-                
+                await _userManager.AddToRoleAsync(korisnik, Uloga.RegistrovaniKorisnik.ToString());
+
                 //isPersistent određuje da li će ostati ulogovan nakon što izađe iz browsera, ako je true, to je RememberMe, pa će ostati ulogovan
                 await _signInManager.SignInAsync(korisnik, isPersistent: false);
 

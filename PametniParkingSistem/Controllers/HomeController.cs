@@ -55,6 +55,26 @@ namespace PametniParkingSistem.Controllers
                 .Where(p => p.StatusPlacanja == StatusPlacanja.Uspjesno)
                 .Sum(p => p.Iznos);
 
+            ViewBag.ZadnjeRezervacije = rezervacije
+    .OrderByDescending(r => r.DatumKreiranja)
+    .Take(5)
+    .ToList();
+
+            ViewBag.NoviKorisnici = korisnici
+                .OrderByDescending(k => k.DatumRegistracije)
+                .Take(5)
+                .ToList();
+
+            ViewBag.ZadnjaPlacanja = placanja
+                .OrderByDescending(p => p.DatumPlacanja)
+                .Take(5)
+                .ToList();
+
+            ViewBag.MjestaVanFunkcije = parkingMjesta
+                .Where(p => p.Status == StatusMjesta.VanFunkcije)
+                .Take(5)
+                .ToList();
+
             if (User.Identity != null && User.Identity.IsAuthenticated && !User.IsInRole("Administrator") && !User.IsInRole("Operater"))
             {
                 var korisnik = await _userManager.GetUserAsync(User);

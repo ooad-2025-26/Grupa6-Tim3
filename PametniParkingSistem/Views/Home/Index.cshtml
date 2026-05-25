@@ -17,11 +17,15 @@
 
     int mojeRezervacijeCount = ViewBag.MojeRezervacijeCount ?? 0;
     var mojaAktivnaRezervacija = ViewBag.MojaAktivnaRezervacija as Rezervacija;
+
+    var zadnjeRezervacije = ViewBag.ZadnjeRezervacije as List<Rezervacija> ?? new List<Rezervacija>();
+    var noviKorisnici = ViewBag.NoviKorisnici as List<Korisnik> ?? new List<Korisnik>();
 }
 
 @if (User.IsInRole("Administrator"))
 {
     <section class="power-dashboard">
+
         <div class="dashboard-hero">
             <div>
                 <span class="home-badge">Administrator</span>
@@ -34,28 +38,171 @@
             </div>
         </div>
 
+        <div class="system-status-bar">
+            <div class="status-item">
+                <span class="status-dot"></span>
+                <span>Sistem aktivan</span>
+            </div>
+
+            <div class="status-item">
+                <i class="fa-solid fa-calendar-check"></i>
+                <span>@aktivneRezervacije aktivnih rezervacija</span>
+            </div>
+
+            <div class="status-item">
+                <i class="fa-solid fa-square-parking"></i>
+                <span>@brojParkingMjesta parking mjesta</span>
+            </div>
+
+            <div class="status-item">
+                <i class="fa-solid fa-users"></i>
+                <span>@brojKorisnika korisnika</span>
+            </div>
+        </div>
+
         <div class="stats-grid">
-            <div class="stat-card"><i class="fa-solid fa-calendar-check"></i><span>Ukupno rezervacija</span><strong>@brojRezervacija</strong></div>
-            <div class="stat-card"><i class="fa-solid fa-circle-check"></i><span>Aktivne</span><strong>@aktivneRezervacije</strong></div>
-            <div class="stat-card"><i class="fa-solid fa-flag-checkered"></i><span>Završene</span><strong>@zavrseneRezervacije</strong></div>
-            <div class="stat-card"><i class="fa-solid fa-ban"></i><span>Otkazane</span><strong>@otkazaneRezervacije</strong></div>
-            <div class="stat-card"><i class="fa-solid fa-square-parking"></i><span>Parking mjesta</span><strong>@brojParkingMjesta</strong></div>
-            <div class="stat-card"><i class="fa-solid fa-users"></i><span>Korisnici</span><strong>@brojKorisnika</strong></div>
-            <div class="stat-card"><i class="fa-solid fa-money-bill-wave"></i><span>Prihod</span><strong>@ukupnaZarada.ToString("0.00") KM</strong></div>
-            <div class="stat-card"><i class="fa-solid fa-star"></i><span>Ocjena</span><strong>@prosjecnaOcjena.ToString("0.0")/5</strong></div>
+            <div class="stat-card">
+                <i class="fa-solid fa-calendar-check"></i>
+                <span>Ukupno rezervacija</span>
+                <strong>@brojRezervacija</strong>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Aktivne</span>
+                <strong>@aktivneRezervacije</strong>
+                <div class="mini-progress">
+                    <div style="width:@((aktivneRezervacije * 100) / Math.Max(brojRezervacija, 1))%"></div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-flag-checkered"></i>
+                <span>Završene</span>
+                <strong>@zavrseneRezervacije</strong>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-ban"></i>
+                <span>Otkazane</span>
+                <strong>@otkazaneRezervacije</strong>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-square-parking"></i>
+                <span>Parking mjesta</span>
+                <strong>@brojParkingMjesta</strong>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-users"></i>
+                <span>Korisnici</span>
+                <strong>@brojKorisnika</strong>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-money-bill-wave"></i>
+                <span>Prihod</span>
+                <strong>@ukupnaZarada.ToString("0.00") KM</strong>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-star"></i>
+                <span>Ocjena</span>
+                <strong>@prosjecnaOcjena.ToString("0.0")/5</strong>
+            </div>
         </div>
 
         <div class="dashboard-grid mt-4">
-            <a asp-controller="Rezervacija" asp-action="Index" class="dashboard-card"><i class="fa-solid fa-calendar-check"></i><h3>Rezervacije</h3><p>Pregled i upravljanje rezervacijama.</p></a>
-            <a asp-controller="Korisnik" asp-action="Index" class="dashboard-card"><i class="fa-solid fa-users"></i><h3>Korisnici</h3><p>Registrovani korisnici, operateri i administratori.</p></a>
-            <a asp-controller="ParkingMjesto" asp-action="Index" class="dashboard-card"><i class="fa-solid fa-car"></i><h3>Parking mjesta</h3><p>Pregled zona, tipova i statusa mjesta.</p></a>
-            <a asp-controller="Recenzija" asp-action="Index" class="dashboard-card"><i class="fa-solid fa-star"></i><h3>Recenzije</h3><p>Pregled ocjena korisnika.</p></a>
+            <a asp-controller="Rezervacija" asp-action="Index" class="dashboard-card">
+                <i class="fa-solid fa-calendar-check"></i>
+                <h3>Rezervacije</h3>
+                <p>Pregled i upravljanje rezervacijama.</p>
+            </a>
+
+            <a asp-controller="Korisnik" asp-action="Index" class="dashboard-card">
+                <i class="fa-solid fa-users"></i>
+                <h3>Korisnici</h3>
+                <p>Registrovani korisnici, operateri i administratori.</p>
+            </a>
+
+            <a asp-controller="ParkingMjesto" asp-action="Index" class="dashboard-card">
+                <i class="fa-solid fa-car"></i>
+                <h3>Parking mjesta</h3>
+                <p>Pregled zona, tipova i statusa mjesta.</p>
+            </a>
+
+            <a asp-controller="Recenzija" asp-action="Index" class="dashboard-card">
+                <i class="fa-solid fa-star"></i>
+                <h3>Recenzije</h3>
+                <p>Pregled ocjena korisnika.</p>
+            </a>
         </div>
+
+        <div class="dashboard-bottom-grid mt-4">
+            <div class="dashboard-live-card">
+                <div class="live-card-header">
+                    <h3><i class="fa-solid fa-clock-rotate-left"></i> Nedavne rezervacije</h3>
+                    <span>Uživo podaci</span>
+                </div>
+
+                @if (zadnjeRezervacije.Any())
+                {
+                    @foreach (var rezervacija in zadnjeRezervacije)
+                    {
+                        <div class="activity-row">
+                            <div>
+                                <strong>
+                                    @(rezervacija.ParkingMjesto != null
+                                        ? rezervacija.ParkingMjesto.Oznaka
+                                        : $"Mjesto #{rezervacija.ParkingMjestoId}")
+                                </strong>
+                                <p>@rezervacija.VrijemePocetka.ToString("dd.MM.yyyy HH:mm")</p>
+                            </div>
+
+                            <span class="activity-status">@rezervacija.StatusRezervacije</span>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted mb-0">Trenutno nema rezervacija.</p>
+                }
+            </div>
+
+            <div class="dashboard-live-card">
+                <div class="live-card-header">
+                    <h3><i class="fa-solid fa-user-plus"></i> Novi korisnici</h3>
+                    <span>Registracije</span>
+                </div>
+
+                @if (noviKorisnici.Any())
+                {
+                    @foreach (var korisnik in noviKorisnici)
+                    {
+                        <div class="activity-row">
+                            <div>
+                                <strong>@korisnik.Ime @korisnik.Prezime</strong>
+                                <p>@korisnik.Email</p>
+                            </div>
+
+                            <span class="activity-role">@korisnik.Uloga</span>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted mb-0">Trenutno nema novih korisnika.</p>
+                }
+            </div>
+        </div>
+
     </section>
 }
 else if (User.IsInRole("Operater"))
 {
     <section class="power-dashboard">
+
         <div class="dashboard-hero operator">
             <div>
                 <span class="home-badge">Operater</span>
@@ -68,18 +215,135 @@ else if (User.IsInRole("Operater"))
             </div>
         </div>
 
+        <div class="system-status-bar">
+            <div class="status-item">
+                <span class="status-dot"></span>
+                <span>Sistem aktivan</span>
+            </div>
+
+            <div class="status-item">
+                <i class="fa-solid fa-calendar-check"></i>
+                <span>@aktivneRezervacije aktivnih rezervacija</span>
+            </div>
+
+            <div class="status-item">
+                <i class="fa-solid fa-square-parking"></i>
+                <span>@brojParkingMjesta parking mjesta</span>
+            </div>
+
+            <div class="status-item">
+                <i class="fa-solid fa-users"></i>
+                <span>@brojKorisnika korisnika</span>
+            </div>
+        </div>
+
         <div class="stats-grid">
-            <div class="stat-card"><i class="fa-solid fa-calendar-check"></i><span>Ukupno rezervacija</span><strong>@brojRezervacija</strong></div>
-            <div class="stat-card"><i class="fa-solid fa-circle-check"></i><span>Aktivne</span><strong>@aktivneRezervacije</strong></div>
-            <div class="stat-card"><i class="fa-solid fa-square-parking"></i><span>Parking mjesta</span><strong>@brojParkingMjesta</strong></div>
-            <div class="stat-card"><i class="fa-solid fa-users"></i><span>Korisnici</span><strong>@brojKorisnika</strong></div>
+            <div class="stat-card">
+                <i class="fa-solid fa-calendar-check"></i>
+                <span>Ukupno rezervacija</span>
+                <strong>@brojRezervacija</strong>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Aktivne</span>
+                <strong>@aktivneRezervacije</strong>
+                <div class="mini-progress">
+                    <div style="width:@((aktivneRezervacije * 100) / Math.Max(brojRezervacija, 1))%"></div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-square-parking"></i>
+                <span>Parking mjesta</span>
+                <strong>@brojParkingMjesta</strong>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-users"></i>
+                <span>Korisnici</span>
+                <strong>@brojKorisnika</strong>
+            </div>
         </div>
 
         <div class="dashboard-grid mt-4">
-            <a asp-controller="Rezervacija" asp-action="Index" class="dashboard-card"><i class="fa-solid fa-calendar-check"></i><h3>Rezervacije</h3><p>Pregled rezervacija korisnika.</p></a>
-            <a asp-controller="ParkingMjesto" asp-action="Index" class="dashboard-card"><i class="fa-solid fa-square-parking"></i><h3>Parking mjesta</h3><p>Pregled i označavanje mjesta van funkcije.</p></a>
-            <a asp-controller="Korisnik" asp-action="Index" class="dashboard-card"><i class="fa-solid fa-user-group"></i><h3>Korisnici</h3><p>Pregled korisnika i statusa naloga.</p></a>
+            <a asp-controller="Rezervacija" asp-action="Index" class="dashboard-card">
+                <i class="fa-solid fa-calendar-check"></i>
+                <h3>Rezervacije</h3>
+                <p>Pregled rezervacija korisnika.</p>
+            </a>
+
+            <a asp-controller="ParkingMjesto" asp-action="Index" class="dashboard-card">
+                <i class="fa-solid fa-square-parking"></i>
+                <h3>Parking mjesta</h3>
+                <p>Pregled i označavanje mjesta van funkcije.</p>
+            </a>
+
+            <a asp-controller="Korisnik" asp-action="Index" class="dashboard-card">
+                <i class="fa-solid fa-user-group"></i>
+                <h3>Korisnici</h3>
+                <p>Pregled korisnika i statusa naloga.</p>
+            </a>
         </div>
+
+        <div class="dashboard-bottom-grid mt-4">
+            <div class="dashboard-live-card">
+                <div class="live-card-header">
+                    <h3><i class="fa-solid fa-clock-rotate-left"></i> Nedavne rezervacije</h3>
+                    <span>Uživo podaci</span>
+                </div>
+
+                @if (zadnjeRezervacije.Any())
+                {
+                    @foreach (var rezervacija in zadnjeRezervacije)
+                    {
+                        <div class="activity-row">
+                            <div>
+                                <strong>
+                                    @(rezervacija.ParkingMjesto != null
+                                        ? rezervacija.ParkingMjesto.Oznaka
+                                        : $"Mjesto #{rezervacija.ParkingMjestoId}")
+                                </strong>
+                                <p>@rezervacija.VrijemePocetka.ToString("dd.MM.yyyy HH:mm")</p>
+                            </div>
+
+                            <span class="activity-status">@rezervacija.StatusRezervacije</span>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted mb-0">Trenutno nema rezervacija.</p>
+                }
+            </div>
+
+            <div class="dashboard-live-card">
+                <div class="live-card-header">
+                    <h3><i class="fa-solid fa-user-plus"></i> Novi korisnici</h3>
+                    <span>Registracije</span>
+                </div>
+
+                @if (noviKorisnici.Any())
+                {
+                    @foreach (var korisnik in noviKorisnici)
+                    {
+                        <div class="activity-row">
+                            <div>
+                                <strong>@korisnik.Ime @korisnik.Prezime</strong>
+                                <p>@korisnik.Email</p>
+                            </div>
+
+                            <span class="activity-role">@korisnik.Uloga</span>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted mb-0">Trenutno nema novih korisnika.</p>
+                }
+            </div>
+        </div>
+
     </section>
 }
 else
@@ -233,9 +497,20 @@ else
         <div class="faq-box">
             <h2>Često postavljana pitanja</h2>
 
-            <div class="faq-item"><strong>Da li mogu rezervisati unaprijed?</strong><p>Da, parking mjesto možete rezervisati za željeni termin.</p></div>
-            <div class="faq-item"><strong>Kada rezervacija postaje aktivna?</strong><p>Rezervacija postaje aktivna nakon online plaćanja.</p></div>
-            <div class="faq-item"><strong>Mogu li gosti pregledati parking mjesta?</strong><p>Da, gosti mogu pregledati parking mjesta i recenzije, ali ne mogu rezervisati.</p></div>
+            <details class="faq-item">
+                <summary>Da li mogu rezervisati unaprijed?</summary>
+                <p>Da, parking mjesto možete rezervisati za željeni termin.</p>
+            </details>
+
+            <details class="faq-item">
+                <summary>Kada rezervacija postaje aktivna?</summary>
+                <p>Rezervacija postaje aktivna nakon online plaćanja.</p>
+            </details>
+
+            <details class="faq-item">
+                <summary>Mogu li gosti pregledati parking mjesta?</summary>
+                <p>Da, gosti mogu pregledati parking mjesta i recenzije, ali ne mogu rezervisati.</p>
+            </details>
         </div>
 
         <div class="contact-box">

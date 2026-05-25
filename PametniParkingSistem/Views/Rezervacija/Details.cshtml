@@ -27,6 +27,11 @@
     }
 
     var trajanje = Model.VrijemeKraja - Model.VrijemePocetka;
+
+    var oznakaMjesta = Model.ParkingMjesto != null ? Model.ParkingMjesto.Oznaka : $"ID-{Model.ParkingMjestoId}";
+    var qrText = $"REZERVACIJA-{Model.Id}-{oznakaMjesta}-{Model.RegistracijskeTablice}";
+    var qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data="
+                + Uri.EscapeDataString(qrText);
 }
 
 <div class="page-header mb-4">
@@ -130,6 +135,22 @@
                 }
 
             </div>
+
+            @if (Model.StatusRezervacije == PametniParkingSistem.Enums.StatusRezervacije.Aktivna)
+            {
+                <div class="qr-detail-box mt-4">
+                    <h5>
+                        <i class="fa-solid fa-qrcode me-2"></i>
+                        QR kod za ulazak
+                    </h5>
+
+                    <p>Skenirajte ovaj QR kod prilikom ulaska na parking.</p>
+
+                    <img src="@qrUrl" alt="QR kod rezervacije" />
+
+                    <small>@qrText</small>
+                </div>
+            }
 
             <hr class="my-4" />
 

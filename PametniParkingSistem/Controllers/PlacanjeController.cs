@@ -169,7 +169,7 @@ namespace PametniParkingSistem.Controllers
         <p><b>Transakcijski broj:</b> {placanje.TransakcijskiBroj}</p>
 <hr />
 <h3 style='color:#166534;'>QR kod za ulazak</h3>
-<p>Prilikom dolaska na parking pokažite ovaj QR kod operateru.</p>
+<p>Skenirajte ovaj QR kod prilikom ulaska na parking.</p>
 <div style='text-align:center; margin-top:15px;'>
     <img src='{qrUrl}' alt='QR kod rezervacije' width='220' height='220' />
 </div>
