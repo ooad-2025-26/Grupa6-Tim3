@@ -1,4 +1,5 @@
 ﻿using PametniParkingSistem.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace PametniParkingSistem.Models
 {
@@ -10,8 +11,18 @@ namespace PametniParkingSistem.Models
         public DateTime VrijemePocetka { get; set; }
         public DateTime VrijemeKraja { get; set; }
 
+        [Required(ErrorMessage = "Registracijske tablice su obavezne.")]
+        [StringLength(12, MinimumLength = 5,
+    ErrorMessage = "Registracijske tablice moraju imati između 5 i 12 znakova.")]
         public string RegistracijskeTablice { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Kontakt telefon je obavezan.")]
+        [RegularExpression(@"^\+?\d{6,15}$",
+            ErrorMessage = "Unesite ispravan broj telefona.")]
         public string KontaktTelefon { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Email je obavezan.")]
+        [EmailAddress(ErrorMessage = "Unesite ispravan email.")]
         public string EmailZaObavijest { get; set; } = string.Empty;
 
         public double UkupnaCijena { get; set; }

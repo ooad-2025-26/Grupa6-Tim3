@@ -99,7 +99,52 @@ namespace PametniParkingSistem.Controllers
             string brojKartice = model.BrojKartice.Replace(" ", "");
 
             if (!ModelState.IsValid)
+            {
+                if (TempData.ContainsKey("RezervacijaZaPlacanje"))
+                {
+                    var json = TempData["RezervacijaZaPlacanje"]?.ToString();
+
+                    if (!string.IsNullOrEmpty(json))
+                    {
+                        TempData.Keep("RezervacijaZaPlacanje");
+
+                        var rezervacija = JsonSerializer.Deserialize<Rezervacija>(json);
+
+                        if (rezervacija != null)
+                        {
+                            model.Iznos = rezervacija.UkupnaCijena;
+
+                            ViewBag.Rezervacija = rezervacija;
+                            ViewBag.TipPlacanja = "NovaRezervacija";
+                        }
+                    }
+                }
+
+                if (TempData.ContainsKey("IzmjenaRezervacijeZaPlacanje"))
+                {
+                    var json = TempData["IzmjenaRezervacijeZaPlacanje"]?.ToString();
+
+                    if (!string.IsNullOrEmpty(json))
+                    {
+                        TempData.Keep("IzmjenaRezervacijeZaPlacanje");
+                        TempData.Keep("IznosDoplate");
+
+                        var rezervacija = JsonSerializer.Deserialize<Rezervacija>(json);
+
+                        if (rezervacija != null)
+                        {
+                            double iznosDoplate = Convert.ToDouble(TempData["IznosDoplate"]);
+
+                            model.Iznos = iznosDoplate;
+
+                            ViewBag.Rezervacija = rezervacija;
+                            ViewBag.TipPlacanja = "Doplata";
+                        }
+                    }
+                }
+
                 return View(model);
+            }
 
             if (brojKartice.Length < 12)
             {

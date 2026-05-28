@@ -202,6 +202,15 @@ namespace PametniParkingSistem.Controllers
             var parkingMjesto = await _parkingMjestoService.GetByIdAsync(rezervacija.ParkingMjestoId);
             if (parkingMjesto == null) return NotFound();
 
+            if (rezervacija.VrijemePocetka < DateTime.Now)
+            {
+                ModelState.AddModelError("VrijemePocetka",
+                    "Datum i vrijeme početka rezervacije ne mogu biti u prošlosti.");
+
+                ViewBag.ParkingMjesto = parkingMjesto;
+                return View(rezervacija);
+            }
+
             if (rezervacija.VrijemeKraja <= rezervacija.VrijemePocetka)
             {
                 ModelState.AddModelError("", "Vrijeme kraja mora biti nakon vremena početka.");
