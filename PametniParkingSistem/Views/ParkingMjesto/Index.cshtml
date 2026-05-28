@@ -178,9 +178,21 @@
                 <span>@opisZone</span>
             </div>
 
-            <div class="parking-grid">
 
-                @foreach (var item in zona.OrderBy(x => x.Oznaka))
+            <div class="scroll-wrapper">
+
+<button class="scroll-btn left" onclick="scrollLeftZone(this)">
+    ❮
+</button>
+
+            <div class="parking-grid zone-scroll">
+
+                    @foreach (var item in zona.OrderBy(x =>
+        int.TryParse(
+            new string(x.Oznaka.Where(char.IsDigit).ToArray()),
+            out int broj)
+            ? broj
+            : int.MaxValue))
                 {
                     string cardClass = "standard-card";
                     string icon = "fa-square-parking";
@@ -199,12 +211,10 @@
                         tipText = "Električno vozilo";
                     }
 
-                    if (item.Oznaka.ToUpper().Contains("VIP"))
-                    {
-                        cardClass = "vip-card";
-                        icon = "fa-star";
-                        tipText = "VIP mjesto";
-                    }
+                        if (item.ParkingZonaId == 4)
+                        {
+                            cardClass = "vip-card";
+                        }
 
                     if (item.Status == StatusMjesta.VanFunkcije)
                     {
@@ -233,6 +243,8 @@
                                 @item.UdaljenostOdUlaza m
                             </span>
                         </div>
+
+
 
                         <div class="parking-features">
                             @if (item.Natkriveno)
@@ -315,7 +327,69 @@
 
             </div>
 
+                <button class="scroll-btn right" onclick="scrollRightZone(this)">
+                    ❯
+                </button>
+
+            </div>
+
         </section>
     }
 
 </div>
+
+<script>
+    function updateScrollButtons(wrapper) {
+        const container = wrapper.querySelector('.zone-scroll');
+        const leftBtn = wrapper.querySelector('.scroll-btn.left');
+        const rightBtn = wrapper.querySelector('.scroll-btn.right');
+
+        if (container.scrollLeft > 20) {
+            leftBtn.style.display = 'block';
+        } else {
+            leftBtn.style.display = 'none';
+        }
+
+        if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 20) {
+            rightBtn.style.display = 'none';
+        } else {
+            rightBtn.style.display = 'block';
+        }
+    }
+
+    function scrollLeftZone(button) {
+        const wrapper = button.parentElement;
+        const container = wrapper.querySelector('.zone-scroll');
+
+        container.scrollBy({
+            left: -700,
+            behavior: 'smooth'
+        });
+
+        setTimeout(() => updateScrollButtons(wrapper), 400);
+    }
+
+    function scrollRightZone(button) {
+        const wrapper = button.parentElement;
+        const container = wrapper.querySelector('.zone-scroll');
+
+        container.scrollBy({
+            left: 700,
+            behavior: 'smooth'
+        });
+
+        setTimeout(() => updateScrollButtons(wrapper), 400);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.scroll-wrapper').forEach(wrapper => {
+            const container = wrapper.querySelector('.zone-scroll');
+
+            updateScrollButtons(wrapper);
+
+            container.addEventListener('scroll', function () {
+                updateScrollButtons(wrapper);
+            });
+        });
+    });
+</script>

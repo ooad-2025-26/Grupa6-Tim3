@@ -1,63 +1,81 @@
 @model PametniParkingSistem.Models.ParkingMjesto
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Brisanje parking mjesta";
 }
 
-<h1>Delete</h1>
+<div class="container py-5">
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>ParkingMjesto</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Oznaka)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Oznaka)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TipMjesta)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TipMjesta)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Natkriveno)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Natkriveno)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UdaljenostOdUlaza)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UdaljenostOdUlaza)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CijenaPoSatu)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CijenaPoSatu)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ParkingZonaId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ParkingZonaId)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+    <div class="delete-card shadow-lg">
+
+        <div class="delete-header">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <h1>Brisanje parking mjesta</h1>
+            <p>
+                Da li ste sigurni da želite obrisati ovo parking mjesto?
+            </p>
+        </div>
+
+        <div class="parking-preview">
+
+            <div class="preview-top">
+                <span class="preview-oznaka">@Model.Oznaka</span>
+
+                <span class="status-badge">
+                    @Model.Status
+                </span>
+            </div>
+
+            <div class="preview-grid">
+
+                <div class="preview-item">
+                    <span>Tip mjesta</span>
+                    <strong>@Model.TipMjesta</strong>
+                </div>
+
+                <div class="preview-item">
+                    <span>Zona</span>
+                    <strong>@Model.ParkingZonaId</strong>
+                </div>
+
+                <div class="preview-item">
+                    <span>Cijena po satu</span>
+                    <strong>@Model.CijenaPoSatu KM</strong>
+                </div>
+
+                <div class="preview-item">
+                    <span>Udaljenost</span>
+                    <strong>@Model.UdaljenostOdUlaza m</strong>
+                </div>
+
+                <div class="preview-item">
+                    <span>Natkriveno</span>
+                    <strong>
+                        @(Model.Natkriveno ? "DA" : "NE")
+                    </strong>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="warning-box">
+            <i class="fa-solid fa-circle-info"></i>
+            Brisanjem parking mjesta podaci se trajno uklanjaju iz sistema.
+        </div>
+
+        <form asp-action="Delete" class="delete-actions">
+            <input type="hidden" asp-for="Id" />
+
+            <button type="submit" class="btn-delete">
+                <i class="fa-solid fa-trash"></i>
+                Obriši parking mjesto
+            </button>
+
+            <a asp-action="Index" class="btn-cancel">
+                Nazad
+            </a>
+        </form>
+
+    </div>
+
 </div>

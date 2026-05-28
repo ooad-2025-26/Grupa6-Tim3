@@ -742,7 +742,6 @@ body {
 }
 
 .status-neutral {
-    background: #f1f5f9;
     color: #475569;
 }
 
@@ -1810,15 +1809,17 @@ body {
 .parking-filter-wrapper {
     max-width: 1400px;
     margin: auto;
-    background: rgba(255,255,255,0.78);
-    backdrop-filter: blur(18px);
-    border: 1px solid rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.16);
     border-radius: 32px;
     padding: 34px;
-    box-shadow: 0 15px 45px rgba(0,0,0,0.06), 0 4px 10px rgba(22,163,74,0.08);
+    box-shadow: 0 18px 45px rgba(0,0,0,0.22);
     position: relative;
     overflow: hidden;
 }
+
+
 
 .parking-filter-header {
     display: flex;
@@ -1832,11 +1833,11 @@ body {
         font-size: 26px;
         font-weight: 900;
         margin-bottom: 4px;
-        color: #052e16;
+        color: white;
     }
 
     .parking-filter-header p {
-        color: #64748b;
+        color: rgba(255,255,255,0.78);
         margin: 0;
     }
 
@@ -1993,7 +1994,7 @@ body {
     padding: 55px 0;
     margin-top: 35px;
     margin-bottom: 45px;
-    background: radial-gradient(circle at top left, rgba(34,197,94,0.18), transparent 40%), radial-gradient(circle at bottom right, rgba(16,185,129,0.14), transparent 35%), linear-gradient( 135deg, #e9f7ef 0%, #dff7ea 45%, #ecfdf5 100%);
+    background: linear-gradient(135deg, #061826 0%, #102d43 55%, #15803d 140%);
 }
 
 .parking-filter-wrapper::before {
@@ -2656,7 +2657,7 @@ body {
 
 .activity-status,
 .activity-role {
-    background: #f1f5f9;
+    
     color: #334155;
     padding: 7px 12px;
     border-radius: 999px;
@@ -2773,4 +2774,537 @@ body {
         height: 100%;
         background: linear-gradient(90deg, #16a34a, #22c55e);
         border-radius: 20px;
+    }
+
+.zone-scroll {
+    display: flex;
+    gap: 28px;
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-behavior: smooth;
+    background: transparent !important;
+    padding: 18px 0 26px 0;
+    margin-bottom: 0 !important;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+    .zone-scroll::-webkit-scrollbar {
+        display: none;
+    }
+
+.parking-card {
+    min-width: 300px;
+    flex-shrink: 0;
+}
+
+.standard-card {
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+    color: white;
+}
+
+.invalid-card {
+    background: linear-gradient(135deg, #eab308, #facc15);
+    color: #1e293b;
+}
+
+.ev-card {
+    background: linear-gradient(135deg, #2563eb, #38bdf8);
+    color: white;
+}
+
+.vip-card {
+    background: linear-gradient(135deg, #111827, #374151);
+    color: white;
+    border: 2px solid #facc15;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+.disabled-card {
+    background: linear-gradient(135deg, #991b1b, #b91c1c);
+    color: white;
+}
+
+.scroll-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: visible;
+    background: transparent !important;
+    padding: 18px 55px 22px 55px;
+    margin-bottom: 0 !important;
+}
+
+.scroll-btn {
+    position: absolute;
+    z-index: 20;
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    cursor: pointer;
+    font-size: 22px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+    .scroll-btn:hover {
+        transform: scale(1.08);
+    }
+
+    .scroll-btn.left {
+        left: 8px;
+        display: none;
+    }
+
+    .scroll-btn.right {
+        right: 8px;
+    }
+
+.delete-card {
+    max-width: 850px;
+    margin: auto;
+    background: white;
+    border-radius: 28px;
+    overflow: hidden;
+}
+
+.delete-header {
+    background: linear-gradient(135deg, #991b1b, #dc2626);
+    color: white;
+    padding: 40px;
+    text-align: center;
+}
+
+    .delete-header i {
+        font-size: 56px;
+        margin-bottom: 18px;
+    }
+
+    .delete-header h1 {
+        font-size: 42px;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .delete-header p {
+        font-size: 18px;
+        opacity: 0.95;
+    }
+
+.parking-preview {
+    padding: 35px;
+}
+
+.preview-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.preview-oznaka {
+    font-size: 54px;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.status-badge {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+.preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.preview-item {
+    background: #f8fafc;
+    border-radius: 18px;
+    padding: 18px;
+}
+
+    .preview-item span {
+        display: block;
+        color: #64748b;
+        margin-bottom: 6px;
+        font-size: 14px;
+    }
+
+    .preview-item strong {
+        font-size: 18px;
+        color: #0f172a;
+    }
+
+.warning-box {
+    margin: 0 35px 30px;
+    background: #fef3c7;
+    color: #92400e;
+    padding: 18px 22px;
+    border-radius: 18px;
+    font-weight: 600;
+}
+
+.delete-actions {
+    display: flex;
+    gap: 18px;
+    padding: 0 35px 35px;
+}
+
+.btn-delete {
+    border: none;
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    color: white;
+    padding: 14px 26px;
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 16px;
+    transition: 0.2s;
+}
+
+    .btn-delete:hover {
+        transform: translateY(-2px);
+    }
+
+.btn-cancel {
+    background: #e2e8f0;
+    color: #0f172a;
+    padding: 14px 26px;
+    border-radius: 16px;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+/* ========================================
+   ADMIN / OPERATOR DASHBOARD UPGRADE
+======================================== */
+
+.power-dashboard {
+    padding-top: 25px;
+}
+
+/* HERO glow */
+
+.dashboard-hero {
+    position: relative;
+    overflow: hidden;
+}
+
+    .dashboard-hero::before {
+        content: "";
+        position: absolute;
+        width: 320px;
+        height: 320px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 50%;
+        top: -120px;
+        right: -100px;
+        filter: blur(10px);
+    }
+
+/* STAT CARDS */
+
+.stat-card {
+    position: relative;
+    overflow: hidden;
+    transition: 0.25s ease;
+}
+
+    .stat-card::before {
+        content: "";
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        background: rgba(34,197,94,0.06);
+        border-radius: 50%;
+        top: -45px;
+        right: -45px;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-6px);
+        border-color: #bbf7d0;
+    }
+
+    /* Različite boje kartica */
+
+    .stat-card:nth-child(1) {
+        border-top: 5px solid #16a34a;
+    }
+
+    .stat-card:nth-child(2) {
+        border-top: 5px solid #2563eb;
+    }
+
+    .stat-card:nth-child(3) {
+        border-top: 5px solid #f59e0b;
+    }
+
+    .stat-card:nth-child(4) {
+        border-top: 5px solid #dc2626;
+    }
+
+    .stat-card:nth-child(5) {
+        border-top: 5px solid #7c3aed;
+    }
+
+    .stat-card:nth-child(6) {
+        border-top: 5px solid #0891b2;
+    }
+
+    .stat-card:nth-child(7) {
+        border-top: 5px solid #15803d;
+    }
+
+    .stat-card:nth-child(8) {
+        border-top: 5px solid #eab308;
+    }
+
+/* DASHBOARD LINK CARDS */
+
+.dashboard-card {
+    position: relative;
+    overflow: hidden;
+    transition: 0.25s ease;
+}
+
+    .dashboard-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient( 135deg, rgba(34,197,94,0.05), transparent );
+        opacity: 0;
+        transition: 0.25s ease;
+    }
+
+    .dashboard-card:hover::before {
+        opacity: 1;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-7px);
+        border-color: #bbf7d0;
+        box-shadow: 0 20px 45px rgba(34,197,94,0.12);
+    }
+
+    .dashboard-card h3 {
+        font-weight: 900;
+        color: #052e16;
+    }
+
+    .dashboard-card p {
+        color: #64748b;
+    }
+
+/* LIVE CARDS */
+
+.dashboard-live-card {
+    position: relative;
+    overflow: hidden;
+}
+
+    .dashboard-live-card::before {
+        content: "";
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        background: rgba(34,197,94,0.04);
+        border-radius: 50%;
+        right: -80px;
+        top: -80px;
+    }
+
+/* Activity rows */
+
+.activity-row {
+    transition: 0.2s ease;
+    border-radius: 14px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+    .activity-row:hover {
+        background: #f8faf9;
+    }
+
+/* Status badges */
+
+.activity-status,
+.activity-role {
+    background: #ecfdf5;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+/* SYSTEM STATUS BAR */
+
+.system-status-bar {
+    box-shadow: 0 10px 25px rgba(15,23,42,0.06);
+}
+
+/* Glow iza dashboarda */
+
+.power-dashboard::before {
+    content: "";
+    position: fixed;
+    width: 500px;
+    height: 500px;
+    background: rgba(34,197,94,0.06);
+    border-radius: 50%;
+    top: -180px;
+    left: -180px;
+    z-index: -1;
+    filter: blur(60px);
+}
+
+/* Operator hero dodatna boja */
+
+.dashboard-hero.operator {
+    background: radial-gradient(circle at top right, rgba(255,255,255,0.12), transparent 30%), linear-gradient(135deg, #102d43, #2563eb);
+}
+
+/* Ikonice malo jače */
+
+.stat-card i,
+.dashboard-card i {
+    filter: drop-shadow(0 4px 10px rgba(34,197,94,0.18));
+}
+
+.contact-box {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #bbf7d0;
+    background: linear-gradient(135deg, #ffffff, #f0fdf4);
+}
+
+    .contact-box::before {
+        content: "";
+        position: absolute;
+        width: 180px;
+        height: 180px;
+        background: rgba(34,197,94,0.10);
+        border-radius: 50%;
+        right: -70px;
+        top: -70px;
+    }
+
+    .contact-box h2 {
+        color: #052e16;
+        font-weight: 900;
+        margin-bottom: 24px;
+    }
+
+    .contact-box p {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: white;
+        padding: 13px 15px;
+        border-radius: 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 6px 18px rgba(15,23,42,0.05);
+    }
+
+        .contact-box p i {
+            width: 34px;
+            height: 34px;
+            background: #dcfce7;
+            color: #166534;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+.zone-info-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+    .zone-info-list li {
+        margin-bottom: 10px;
+        color: #475569;
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+.pricing-card strong {
+    display: block;
+    margin-top: 20px;
+    font-size: 28px;
+    font-weight: 900;
+    color: #15803d;
+    line-height: 1.2;
+    word-break: keep-all;
+}
+
+.pricing-card {
+    min-width: 0;
+}
+
+    .pricing-card strong {
+        white-space: nowrap;
+    }
+
+.pricing-card.vip strong {
+    color: white;
+}
+
+    .pricing-card.vip .zone-info-list li {
+        color: rgba(255,255,255,0.88);
+    }
+
+.modern-input-group label,
+.price-box label {
+    color: white;
+}
+
+.filter-badge {
+    background: rgba(255,255,255,0.13);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+.reset-btn-modern {
+    color: rgba(255,255,255,0.78);
+}
+
+    .reset-btn-modern:hover {
+        color: white;
+    }
+
+.reservation-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 28px;
+}
+
+    .reservation-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        border-radius: 28px 28px 0 0;
+    }
+
+    .reservation-card.aktivna::before {
+        background: linear-gradient(90deg, #2563eb, #60a5fa);
+    }
+
+    .reservation-card.zavrsena::before {
+        background: linear-gradient(90deg, #16a34a, #4ade80);
+    }
+
+    .reservation-card.otkazana::before {
+        background: linear-gradient(90deg, #dc2626, #f87171);
     }

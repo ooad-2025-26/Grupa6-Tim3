@@ -15,7 +15,7 @@ namespace PametniParkingSistem.Repositories
 
         public async Task<List<Korisnik>> GetAllAsync()
         {
-            return await _context.Users.ToListAsync(); //više nije Korisnici već Users i nije int id nego string id
+            return await _context.Users.ToListAsync(); 
         }
 
         public async Task<Korisnik?> GetByIdAsync(string id)

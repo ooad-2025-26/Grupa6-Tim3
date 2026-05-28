@@ -13,6 +13,7 @@ namespace PametniParkingSistem.Controllers
         private readonly UserManager<Korisnik> _userManager;
         private readonly IRezervacijaService _rezervacijaService;
 
+       
         public KorisnikController(
             IKorisnikService service,
             UserManager<Korisnik> userManager,
@@ -23,6 +24,7 @@ namespace PametniParkingSistem.Controllers
             _rezervacijaService = rezervacijaService;
         }
 
+  
         [Authorize(Roles = "Administrator,Operater")]
         public async Task<IActionResult> Index()
         {
@@ -65,6 +67,8 @@ namespace PametniParkingSistem.Controllers
         [Authorize(Roles = "Administrator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
+
+    
         public async Task<IActionResult> Create([Bind("Id,Ime,Prezime,Email,PhoneNumber,DatumRegistracije,StatusNaloga,Uloga")] Korisnik korisnik)
         {
             if (ModelState.IsValid)
@@ -142,7 +146,7 @@ namespace PametniParkingSistem.Controllers
         }
 
         [Authorize(Roles = "Administrator")]
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("Delete")] 
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
