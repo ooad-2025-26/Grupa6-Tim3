@@ -266,7 +266,7 @@ else if (User.IsInRole("Operater"))
             </div>
         </div>
 
-        <div class="dashboard-grid mt-4">
+        <div class="dashboard-grid operator-dashboard-grid mt-4">
             <a asp-controller="Rezervacija" asp-action="Index" class="dashboard-card">
                 <i class="fa-solid fa-calendar-check"></i>
                 <h3>Rezervacije</h3>
@@ -381,7 +381,29 @@ else
             <div class="parking-preview">
                 <i class="fa-solid fa-square-parking"></i>
                 <h3>Parking kapacitet</h3>
-                <p>Zone A, B, C i VIP zona sa elektronskim upravljanjem rezervacijama.</p>
+
+                <div class="parking-preview-stats">
+                    <div>
+                        <strong>200+</strong>
+                        <span>parking mjesta</span>
+                    </div>
+
+                    <div>
+                        <strong>4</strong>
+                        <span>parking zone</span>
+                    </div>
+
+                    <div>
+                        <strong>24/7</strong>
+                        <span>online rezervacije</span>
+                    </div>
+                </div>
+
+                <p>
+                    Sistem obuhvata preko 200 parking mjesta raspoređenih kroz više zona,
+                    prilagođenih različitim potrebama korisnika — od standardnih mjesta za svakodnevno parkiranje,
+                    preko invalidskih i električnih mjesta, do VIP pozicija sa najboljom lokacijom i dodatnim pogodnostima.
+                </p>
             </div>
         </div>
     </section>
@@ -393,19 +415,42 @@ else
                 <i class="fa-solid fa-calendar-days"></i>
                 <span>Moje rezervacije</span>
                 <strong>@mojeRezervacijeCount</strong>
+                <p class="mini-card-note">ukupno kreiranih rezervacija</p>
             </div>
 
             @if (mojaAktivnaRezervacija != null)
             {
                 <div class="next-reservation-card">
-                    <span>Sljedeća aktivna rezervacija</span>
-                    <h3>
-                        @(mojaAktivnaRezervacija.ParkingMjesto != null
-                            ? mojaAktivnaRezervacija.ParkingMjesto.Oznaka
-                            : $"ID {mojaAktivnaRezervacija.ParkingMjestoId}")
-                    </h3>
-                    <p>@mojaAktivnaRezervacija.VrijemePocetka.ToString("dd.MM.yyyy HH:mm") - @mojaAktivnaRezervacija.VrijemeKraja.ToString("dd.MM.yyyy HH:mm")</p>
-                    <a asp-controller="Rezervacija" asp-action="Details" asp-route-id="@mojaAktivnaRezervacija.Id" class="btn btn-success">Detalji</a>
+
+                    <span class="reservation-label">
+                        Sljedeća aktivna rezervacija
+                    </span>
+
+                    <div class="active-reservation-title">
+                        <h3>
+                            @(mojaAktivnaRezervacija.ParkingMjesto != null
+                                ? mojaAktivnaRezervacija.ParkingMjesto.Oznaka
+                                : $"ID {mojaAktivnaRezervacija.ParkingMjestoId}")
+                        </h3>
+
+                        <span class="reservation-status">
+                            Aktivna
+                        </span>
+                    </div>
+
+                    <p class="reservation-date">
+                        @mojaAktivnaRezervacija.VrijemePocetka.ToString("dd.MM.yyyy HH:mm")
+                        -
+                        @mojaAktivnaRezervacija.VrijemeKraja.ToString("dd.MM.yyyy HH:mm")
+                    </p>
+
+                    <a asp-controller="Rezervacija"
+                           asp-action="Details"
+                           asp-route-id="@mojaAktivnaRezervacija.Id"
+                           class="btn btn-success">
+                        Detalji
+                    </a>
+
                 </div>
             }
             else
@@ -558,17 +603,26 @@ else
             <h2>Često postavljana pitanja</h2>
 
             <details class="faq-item">
-                <summary>Da li mogu rezervisati unaprijed?</summary>
+                <summary>
+                    Da li mogu rezervisati unaprijed?
+                    <i class="fa-solid fa-chevron-down"></i>
+                </summary>
                 <p>Da, parking mjesto možete rezervisati za željeni termin.</p>
             </details>
 
             <details class="faq-item">
-                <summary>Kada rezervacija postaje aktivna?</summary>
+                <summary>
+                    Kada rezervacija postaje aktivna?
+                    <i class="fa-solid fa-chevron-down"></i>
+                </summary>
                 <p>Rezervacija postaje aktivna nakon online plaćanja.</p>
             </details>
 
             <details class="faq-item">
-                <summary>Mogu li gosti pregledati parking mjesta?</summary>
+                <summary>
+                    Mogu li gosti pregledati parking mjesta?
+                    <i class="fa-solid fa-chevron-down"></i>
+                </summary>
                 <p>Da, gosti mogu pregledati parking mjesta i recenzije, ali ne mogu rezervisati.</p>
             </details>
         </div>

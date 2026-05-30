@@ -1711,7 +1711,7 @@ body {
 
 .user-quick-panel {
     display: grid;
-    grid-template-columns: 0.8fr 1.5fr;
+    grid-template-columns: 35% 65%;
     gap: 24px;
     margin-bottom: 60px;
 }
@@ -1720,9 +1720,22 @@ body {
 .next-reservation-card {
     background: white;
     border-radius: 28px;
-    padding: 28px;
+    padding: 22px 28px;
+    min-height: 190px;
     box-shadow: 0 14px 35px rgba(0,0,0,0.08);
     border: 1px solid #e5e7eb;
+}
+
+.user-quick-panel {
+    grid-template-columns: 0.65fr 1.35fr;
+    align-items: stretch;
+}
+
+.user-mini-card,
+.next-reservation-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
     .user-mini-card i {
@@ -3308,3 +3321,263 @@ body {
     .reservation-card.otkazana::before {
         background: linear-gradient(90deg, #dc2626, #f87171);
     }
+
+.parking-preview-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 24px 0;
+}
+
+    .parking-preview-stats div {
+        background: rgba(255,255,255,0.13);
+        border: 1px solid rgba(255,255,255,0.16);
+        border-radius: 18px;
+        padding: 14px;
+    }
+
+    .parking-preview-stats strong {
+        display: block;
+        font-size: 28px;
+        font-weight: 900;
+        color: #bbf7d0;
+    }
+
+    .parking-preview-stats span {
+        color: rgba(255,255,255,0.78);
+        font-size: 13px;
+    }
+
+.mini-card-note {
+    margin-top: 6px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.active-reservation-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+    .active-reservation-title h3 {
+        margin: 0;
+    }
+
+    .active-reservation-title span {
+        background: #dcfce7;
+        color: #166534;
+        padding: 7px 13px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+.landing-card {
+    transition: 0.25s ease;
+}
+
+    .landing-card:hover {
+        transform: translateY(-6px);
+        border-color: #bbf7d0;
+        box-shadow: 0 20px 45px rgba(34,197,94,0.12);
+    }
+
+.pricing-card.vip {
+    transform: scale(1.03);
+    box-shadow: 0 22px 50px rgba(6,24,38,0.25);
+}
+
+.faq-item summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+    .faq-item summary i {
+        color: #16a34a;
+        transition: 0.2s ease;
+    }
+
+.faq-item[open] summary i {
+    transform: rotate(180deg);
+}
+
+.reservation-label {
+    display: block;
+    font-size: 18px;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 22px;
+}
+
+.active-reservation-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+    .active-reservation-title h3 {
+        margin: 0;
+        font-size: 54px;
+        line-height: 1;
+    }
+
+.reservation-status {
+    background: #dcfce7;
+    color: #166534;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+.reservation-date {
+    font-size: 18px;
+    color: #475569;
+    margin-bottom: 28px;
+}
+
+.next-reservation-card {
+    padding: 36px 42px !important;
+}
+
+.recommended-card {
+    border: 3px solid #f59e0b !important;
+    position: relative;
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.25);
+}
+
+.recommended-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 999px;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+}
+
+/* ADMIN / OPERATOR DASHBOARD LAYOUT FIX */
+
+.power-dashboard {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 34px 20px 70px;
+}
+
+.dashboard-hero {
+    margin-bottom: 26px;
+}
+
+.system-status-bar {
+    margin-bottom: 30px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+    margin-bottom: 34px;
+}
+
+.stat-card {
+    min-height: 150px;
+    padding: 28px;
+}
+
+    .stat-card i {
+        font-size: 32px;
+    }
+
+    .stat-card strong {
+        font-size: 34px;
+    }
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+    margin-bottom: 36px;
+}
+
+.dashboard-card {
+    min-height: 190px;
+    padding: 30px 28px;
+}
+
+    .dashboard-card i {
+        font-size: 38px;
+    }
+
+    .dashboard-card h3 {
+        font-size: 25px;
+        margin-top: 10px;
+    }
+
+.dashboard-bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    margin-top: 12px;
+}
+
+.dashboard-live-card {
+    padding: 32px;
+}
+
+.live-card-header {
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.activity-row {
+    padding: 18px 10px;
+}
+
+    .activity-row strong {
+        font-size: 16px;
+    }
+
+    .activity-row p {
+        font-size: 14px;
+    }
+
+@media (max-width: 1100px) {
+    .stats-grid,
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dashboard-bottom-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .stats-grid,
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.operator-dashboard-grid {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+    .operator-dashboard-grid .dashboard-card {
+        min-height: 210px;
+    }
+
+@media (max-width: 900px) {
+    .operator-dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}

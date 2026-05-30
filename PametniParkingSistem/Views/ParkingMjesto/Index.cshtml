@@ -221,7 +221,15 @@
                         cardClass = "disabled-card";
                     }
 
-                    <div class="parking-card @cardClass">
+                        <div class="parking-card @cardClass @(ViewBag.PreporucenoMjestoId == item.Id ? "recommended-card" : "")">
+
+                            @if (ViewBag.PreporucenoMjestoId == item.Id)
+                            {
+                                <div class="recommended-badge">
+                                    <i class="fa-solid fa-star"></i>
+                                    Preporučeno
+                                </div>
+                            }
 
                         <div class="parking-card-top">
                             <i class="fa-solid @icon"></i>

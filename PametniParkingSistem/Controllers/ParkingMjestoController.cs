@@ -46,6 +46,14 @@ namespace PametniParkingSistem.Controllers
             if (maxUdaljenost.HasValue)
                 parkingMjesta = parkingMjesta.Where(p => p.UdaljenostOdUlaza <= maxUdaljenost.Value).ToList();
 
+            var preporucenoMjesto = parkingMjesta
+    .Where(p => p.Status != StatusMjesta.VanFunkcije)
+    .OrderBy(p => p.UdaljenostOdUlaza)
+    .ThenBy(p => p.CijenaPoSatu)
+    .FirstOrDefault();
+
+            ViewBag.PreporucenoMjestoId = preporucenoMjesto?.Id;
+
             return View(parkingMjesta);
         }
 
