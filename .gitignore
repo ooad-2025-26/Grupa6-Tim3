@@ -31,7 +31,7 @@ project.fragment.lock.json
 artifacts/
 
 # ASP.NET
-wwwroot/lib/
+# wwwroot/lib/
 appsettings.*.json
 !appsettings.Development.json
 launchSettings.json
