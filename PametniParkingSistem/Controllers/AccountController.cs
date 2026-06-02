@@ -5,16 +5,14 @@ using PametniParkingSistem.Models;
 using PametniParkingSistem.ViewModels.Account;
 
 namespace PametniParkingSistem.Controllers
-{//upravljam registracijom, loginom, pristupom, logoutom
+{
+    // Kontroler za registraciju, prijavu, odjavu i kontrolu pristupa korisnika
     public class AccountController : Controller
     {
-        //UserManager
         private readonly UserManager<Korisnik> _userManager;
-        //SignInManager
         private readonly SignInManager<Korisnik> _signInManager;
 
         public AccountController(
-            //kontroler UserManager
             UserManager<Korisnik> userManager,
             SignInManager<Korisnik> signInManager)
         {
@@ -46,22 +44,34 @@ namespace PametniParkingSistem.Controllers
                 Uloga = Uloga.RegistrovaniKorisnik
             };
 
-            //kreiranje k, pass
             var result = await _userManager.CreateAsync(korisnik, model.Lozinka);
 
             if (result.Succeeded)
             {
-                //dodjeljuje 
-                await _userManager.AddToRoleAsync(korisnik, Uloga.RegistrovaniKorisnik.ToString());
+                var roleResult = await _userManager.AddToRoleAsync(
+                    korisnik,
+                    Uloga.RegistrovaniKorisnik.ToString()
+                );
 
-                //isPersistent određuje da li će ostati ulogovan nakon što izađe iz browsera, ako je true, to je RememberMe, pa će ostati ulogovan
+                if (!roleResult.Succeeded)
+                {
+                    foreach (var error in roleResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, PrevediIdentityGresku(error));
+                    }
+
+                    return View(model);
+                }
+
                 await _signInManager.SignInAsync(korisnik, isPersistent: false);
 
                 return RedirectByRole(korisnik);
             }
 
             foreach (var error in result.Errors)
-                ModelState.AddModelError("", error.Description);
+            {
+                ModelState.AddModelError(string.Empty, PrevediIdentityGresku(error));
+            }
 
             return View(model);
         }
@@ -80,26 +90,49 @@ namespace PametniParkingSistem.Controllers
 
             var korisnik = await _userManager.FindByEmailAsync(model.Email);
 
-            if (korisnik == null || korisnik.StatusNaloga != StatusNaloga.Aktivan)
+            if (korisnik == null)
             {
-                ModelState.AddModelError("", "Korisnički nalog ne postoji ili nije aktivan.");
+                ModelState.AddModelError(string.Empty, "Neispravan email ili lozinka.");
                 return View(model);
             }
 
-            //SignIn login
+            if (korisnik.StatusNaloga != StatusNaloga.Aktivan)
+            {
+                ModelState.AddModelError(string.Empty, "Korisnički nalog nije aktivan.");
+                return View(model);
+            }
+
             var result = await _signInManager.PasswordSignInAsync(
                 model.Email,
                 model.Lozinka,
-                model.ZapamtiMe, //ako stisne korisnik ovo, onda će isPersistent biti =true i ostati će ulogovan
-                lockoutOnFailure: false);
+                model.ZapamtiMe,
+                lockoutOnFailure: false
+            );
 
             if (result.Succeeded)
             {
-
                 return RedirectByRole(korisnik);
             }
 
-            ModelState.AddModelError("", "Neispravan email ili lozinka.");
+            if (result.IsLockedOut)
+            {
+                ModelState.AddModelError(string.Empty, "Korisnički nalog je privremeno zaključan.");
+                return View(model);
+            }
+
+            if (result.IsNotAllowed)
+            {
+                ModelState.AddModelError(string.Empty, "Prijava trenutno nije dozvoljena za ovaj nalog.");
+                return View(model);
+            }
+
+            if (result.RequiresTwoFactor)
+            {
+                ModelState.AddModelError(string.Empty, "Za ovaj nalog je potrebna dodatna potvrda prijave.");
+                return View(model);
+            }
+
+            ModelState.AddModelError(string.Empty, "Neispravan email ili lozinka.");
             return View(model);
         }
 
@@ -107,7 +140,6 @@ namespace PametniParkingSistem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            //SignIn logout
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
@@ -127,7 +159,34 @@ namespace PametniParkingSistem.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+        // Prevodi Identity validacijske greške na bosanski jezik
+        private string PrevediIdentityGresku(IdentityError error)
+        {
+            return error.Code switch
+            {
+                "DefaultError" => "Došlo je do greške. Pokušajte ponovo.",
+                "ConcurrencyFailure" => "Došlo je do konflikta pri spremanju podataka. Pokušajte ponovo.",
+                "PasswordMismatch" => "Lozinka nije ispravna.",
+                "InvalidToken" => "Token nije ispravan.",
+                "LoginAlreadyAssociated" => "Ova prijava je već povezana sa drugim korisnikom.",
+                "InvalidUserName" => "Korisničko ime nije ispravno.",
+                "InvalidEmail" => "Email adresa nije ispravna.",
+                "DuplicateUserName" => "Korisnik sa ovom email adresom već postoji.",
+                "DuplicateEmail" => "Korisnik sa ovom email adresom već postoji.",
+                "InvalidRoleName" => "Naziv uloge nije ispravan.",
+                "DuplicateRoleName" => "Ova uloga već postoji.",
+                "UserAlreadyHasPassword" => "Korisnik već ima postavljenu lozinku.",
+                "UserLockoutNotEnabled" => "Zaključavanje korisničkog naloga nije omogućeno.",
+                "UserAlreadyInRole" => "Korisnik već ima ovu ulogu.",
+                "UserNotInRole" => "Korisnik nema ovu ulogu.",
+                "PasswordTooShort" => "Lozinka mora imati najmanje 6 karaktera.",
+                "PasswordRequiresNonAlphanumeric" => "Lozinka mora sadržavati barem jedan specijalni znak.",
+                "PasswordRequiresDigit" => "Lozinka mora sadržavati barem jedan broj.",
+                "PasswordRequiresLower" => "Lozinka mora sadržavati barem jedno malo slovo.",
+                "PasswordRequiresUpper" => "Lozinka mora sadržavati barem jedno veliko slovo.",
+                _ => "Došlo je do greške. Provjerite unesene podatke i pokušajte ponovo."
+            };
+        }
     }
-
-
 }
