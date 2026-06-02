@@ -19,13 +19,14 @@ var connectionString = baseConnectionString + $"Password={password};";
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-//AddIdentity Koristi Identity sistem sa mojom klasom Korisnik i rolama.
+// AddIdentity koristi Identity sistem sa mojom klasom Korisnik i rolama.
 
 builder.Services.AddIdentity<Korisnik, IdentityRole>(options =>
 {
-    //ne traži email potvrdu prije logina
+    // ne traži email potvrdu prije logina
     options.SignIn.RequireConfirmedAccount = false;
 })
+.AddErrorDescriber<BosanskiIdentityErrorDescriber>()
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
@@ -54,6 +55,7 @@ builder.Services.AddScoped<IParkingZonaService, ParkingZonaService>();
 builder.Services.AddScoped<IKorisnikService, KorisnikService>();
 builder.Services.AddScoped<IEmailObavijestService, EmailObavijestService>();
 builder.Services.AddScoped<ICjenovnikService, CjenovnikService>();
+
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));
 

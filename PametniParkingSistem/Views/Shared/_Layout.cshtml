@@ -18,11 +18,9 @@
 </head>
 
 <body>
-
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark custom-navbar shadow-sm">
             <div class="container">
-
                 <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
                     <i class="fa-solid fa-square-parking me-2"></i>
                     Pametni Parking
@@ -36,9 +34,7 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarContent">
-
                     <ul class="navbar-nav main-nav mx-auto mb-2 mb-lg-0">
-
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Home" asp-action="Index">
                                 <i class="fa-solid fa-house me-1"></i>
@@ -85,28 +81,23 @@
                         @if (User.IsInRole("Administrator") || User.IsInRole("Operater"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link"
-                                       asp-controller="Korisnik"
-                                       asp-action="Index">
-
+                                <a class="nav-link" asp-controller="Korisnik" asp-action="Index">
                                     <i class="fa-solid fa-users me-1"></i>
                                     Korisnici
                                 </a>
                             </li>
                         }
-
                     </ul>
 
                     <div class="navbar-right">
-
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
                             var korisnik = await UserManager.GetUserAsync(User);
                             var ime = korisnik?.Ime ?? "korisniče";
 
                             <a asp-controller="Korisnik"
-                                   asp-action="Profil"
-                                   class="navbar-profile-link">
+                               asp-action="Profil"
+                               class="navbar-profile-link">
                                 <span>Dobrodošli, @ime</span>
                                 <div class="profile-avatar">
                                     <i class="fa-solid fa-user"></i>
@@ -115,34 +106,31 @@
 
                             <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
                                 <button type="submit" class="logout-link">
-                                    Logout
+                                    Odjava
                                 </button>
                             </form>
                         }
                         else
                         {
                             <a asp-controller="Account"
-                                   asp-action="Register"
-                                   class="auth-link">
+                               asp-action="Register"
+                               class="auth-link">
                                 Registracija
                             </a>
 
                             <a asp-controller="Account"
-                                   asp-action="Login"
-                                   class="auth-link auth-login">
-                                Login
+                               asp-action="Login"
+                               class="auth-link auth-login">
+                                Prijava
                             </a>
                         }
-
                     </div>
-
                 </div>
             </div>
         </nav>
     </header>
 
     <div class="container mt-4">
-
         <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
             @if (TempData["Success"] != null)
             {
@@ -193,14 +181,13 @@
     @await RenderSectionAsync("Scripts", required: false)
 
     <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const toastElements = document.querySelectorAll(".toast");
-                toastElements.forEach(t => {
-                    const toast = new bootstrap.Toast(t, { delay: 3500 });
-                    toast.show();
-                });
+        document.addEventListener("DOMContentLoaded", function () {
+            const toastElements = document.querySelectorAll(".toast");
+            toastElements.forEach(t => {
+                const toast = new bootstrap.Toast(t, { delay: 3500 });
+                toast.show();
             });
+        });
     </script>
-
 </body>
 </html>
