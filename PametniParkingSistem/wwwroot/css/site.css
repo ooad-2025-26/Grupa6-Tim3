@@ -3581,3 +3581,200 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* ========================================
+   VALIDATION / REGISTER FORM FIX
+======================================== */
+
+.field-validation-error,
+.validation-message,
+span.text-danger,
+.auth-right span[data-valmsg-for] {
+    display: block !important;
+    width: 100% !important;
+    clear: both !important;
+    margin-top: 6px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    line-height: 1.35 !important;
+    color: #dc2626 !important;
+}
+
+.field-validation-valid,
+.validation-summary-valid {
+    display: none !important;
+}
+
+.input-validation-error,
+.form-control.input-validation-error,
+.auth-input.input-validation-error {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.12) !important;
+}
+
+.validation-summary-errors {
+    background: #fee2e2 !important;
+    color: #991b1b !important;
+    border: 1px solid #fecaca !important;
+    border-radius: 14px !important;
+    padding: 14px 18px !important;
+    margin-bottom: 20px !important;
+    font-weight: 500 !important;
+}
+
+    .validation-summary-errors ul {
+        margin: 0 !important;
+        padding-left: 20px !important;
+    }
+
+.auth-page {
+    min-height: calc(100vh - 140px);
+    background: linear-gradient(135deg, #ecfdf5 0%, #f4f8f5 45%, #ffffff 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: white;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+}
+
+.auth-left {
+    padding: 70px 60px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: linear-gradient(135deg, #166534, #15803d);
+}
+
+    .auth-left h1 {
+        font-size: 52px;
+        font-weight: 800;
+        margin-bottom: 24px;
+    }
+
+    .auth-left p {
+        font-size: 18px;
+        line-height: 1.8;
+        opacity: 0.95;
+    }
+
+.auth-features {
+    margin-top: 35px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+    .auth-features span {
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .auth-features i {
+        margin-right: 10px;
+    }
+
+.auth-right {
+    background: white;
+    padding: 55px 60px;
+}
+
+    .auth-right h2 {
+        font-size: 42px;
+        font-weight: 800;
+        margin-bottom: 28px;
+        color: #0f172a;
+    }
+
+    .auth-right .mb-3,
+    .auth-right .mb-4,
+    .auth-right .form-group {
+        display: block !important;
+        width: 100% !important;
+    }
+
+    .auth-right label,
+    .auth-right .form-label {
+        display: block !important;
+        margin-bottom: 7px !important;
+        font-weight: 700 !important;
+        color: #0f172a !important;
+    }
+
+    .auth-right input,
+    .auth-right .form-control,
+    .auth-right .auth-input {
+        display: block !important;
+        width: 100% !important;
+    }
+
+.auth-input {
+    width: 100%;
+    height: 52px;
+    border-radius: 14px;
+    border: 1px solid #d1d5db;
+    font-size: 16px;
+    padding-left: 18px;
+}
+
+    .auth-input:focus {
+        border-color: #16a34a;
+        box-shadow: 0 0 0 0.2rem rgba(22, 163, 74, 0.2);
+    }
+
+.auth-btn {
+    height: 56px;
+    border-radius: 14px;
+    border: none;
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    font-size: 17px;
+    font-weight: 700;
+    color: white;
+    transition: 0.25s;
+}
+
+    .auth-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba(22, 163, 74, 0.35);
+        color: white;
+    }
+
+.auth-bottom-text {
+    margin-top: 24px;
+    text-align: center;
+    color: #64748b;
+}
+
+    .auth-bottom-text a {
+        color: #16a34a;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+        .auth-bottom-text a:hover {
+            color: #15803d;
+        }
+
+@media(max-width: 900px) {
+    .auth-card {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-left {
+        display: none;
+    }
+
+    .auth-right {
+        padding: 45px 30px;
+    }
+}
