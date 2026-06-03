@@ -19,6 +19,7 @@ namespace PametniParkingSistem.Data
         public DbSet<EmailObavijest> EmailObavijesti { get; set; }
         public DbSet<Cjenovnik> Cjenovnici { get; set; }
         public DbSet<KriterijPretrage> KriterijiPretrage { get; set; }
+        public DbSet<PodrskaZahtjev> PodrskaZahtjevi { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,11 +33,13 @@ namespace PametniParkingSistem.Data
             modelBuilder.Entity<EmailObavijest>().ToTable("EmailObavijest");
             modelBuilder.Entity<Cjenovnik>().ToTable("Cjenovnik");
             modelBuilder.Entity<KriterijPretrage>().ToTable("KriterijPretrage");
+            modelBuilder.Entity<PodrskaZahtjev>().ToTable("PodrskaZahtjev");
 
             modelBuilder.Entity<Recenzija>()
                 .HasOne(r => r.Rezervacija)
                 .WithOne(rz => rz.Recenzija)
-                .HasForeignKey<Recenzija>(r => r.RezervacijaId);
+                .HasForeignKey<Recenzija>(r => r.RezervacijaId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Recenzija>()
                 .HasOne(r => r.Korisnik)
@@ -45,10 +48,16 @@ namespace PametniParkingSistem.Data
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Rezervacija>()
-       .HasOne(r => r.Korisnik)
-       .WithMany(k => k.Rezervacije)
-       .HasForeignKey(r => r.KorisnikId)
-       .OnDelete(DeleteBehavior.NoAction);
+                .HasOne(r => r.Korisnik)
+                .WithMany(k => k.Rezervacije)
+                .HasForeignKey(r => r.KorisnikId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<PodrskaZahtjev>()
+                .HasOne(p => p.Korisnik)
+                .WithMany()
+                .HasForeignKey(p => p.KorisnikId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

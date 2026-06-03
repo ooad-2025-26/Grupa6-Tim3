@@ -76,6 +76,13 @@
                                     Recenzije
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Podrska" asp-action="Index">
+                                    <i class="fa-solid fa-headset me-1"></i>
+                                    Podrška
+                                </a>
+                            </li>
                         }
 
                         @if (User.IsInRole("Administrator") || User.IsInRole("Operater"))
