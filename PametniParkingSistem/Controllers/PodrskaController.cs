@@ -31,14 +31,16 @@ namespace PametniParkingSistem.Controllers
                 var korisnik = await _userManager.GetUserAsync(User);
                 if (korisnik == null) return Unauthorized();
 
-                zahtjevi = zahtjevi.Where(z => z.KorisnikId == korisnik.Id)
+                zahtjevi = zahtjevi
+                    .Where(z => z.KorisnikId == korisnik.Id)
                     .OrderByDescending(z => z.DatumKreiranja);
             }
 
             if (!string.IsNullOrWhiteSpace(status) &&
                 Enum.TryParse<StatusPodrske>(status, out var parsedStatus))
             {
-                zahtjevi = zahtjevi.Where(z => z.Status == parsedStatus)
+                zahtjevi = zahtjevi
+                    .Where(z => z.Status == parsedStatus)
                     .OrderByDescending(z => z.DatumKreiranja);
             }
 
@@ -69,6 +71,8 @@ namespace PametniParkingSistem.Controllers
             zahtjev.KorisnikId = korisnik.Id;
             zahtjev.Status = StatusPodrske.Otvoren;
             zahtjev.DatumKreiranja = DateTime.Now;
+            zahtjev.DatumOdgovora = null;
+            zahtjev.Odgovor = null;
 
             _context.PodrskaZahtjevi.Add(zahtjev);
             await _context.SaveChangesAsync();
@@ -120,7 +124,8 @@ namespace PametniParkingSistem.Controllers
         {
             var zahtjev = await _context.PodrskaZahtjevi.FindAsync(id);
 
-            if (zahtjev == null) return NotFound();
+            if (zahtjev == null)
+                return NotFound();
 
             if (string.IsNullOrWhiteSpace(odgovor))
             {
@@ -128,15 +133,45 @@ namespace PametniParkingSistem.Controllers
                 return RedirectToAction(nameof(Odgovori), new { id });
             }
 
-            zahtjev.Odgovor = odgovor;
+            zahtjev.Odgovor = odgovor.Trim();
             zahtjev.Status = status;
             zahtjev.DatumOdgovora = DateTime.Now;
 
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Odgovor na zahtjev je uspješno sačuvan.";
+            TempData["Success"] = $"Zahtjev je ažuriran. Novi status: {FormatirajStatus(status)}.";
 
-            return RedirectToAction(nameof(Details), new { id });
+            return RedirectToAction(nameof(Index), new { status = status.ToString() });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> Obrisi(int id)
+        {
+            var zahtjev = await _context.PodrskaZahtjevi.FindAsync(id);
+
+            if (zahtjev == null)
+                return NotFound();
+
+            _context.PodrskaZahtjevi.Remove(zahtjev);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Zahtjev za podršku je uspješno obrisan.";
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        private static string FormatirajStatus(StatusPodrske status)
+        {
+            return status switch
+            {
+                StatusPodrske.Otvoren => "Otvoren",
+                StatusPodrske.UObradi => "U obradi",
+                StatusPodrske.Rijesen => "Riješen",
+                StatusPodrske.Zatvoren => "Zatvoren",
+                _ => status.ToString()
+            };
         }
     }
 }
