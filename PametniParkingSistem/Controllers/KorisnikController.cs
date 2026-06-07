@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -90,7 +90,7 @@ namespace PametniParkingSistem.Controllers
 
             await _service.AddAsync(korisnik);
 
-            TempData["Success"] = "Korisnik uspje�no kreiran.";
+            TempData["Success"] = "Korisnik uspješno kreiran.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -143,7 +143,7 @@ namespace PametniParkingSistem.Controllers
 
             await _service.UpdateAsync(korisnik);
 
-            TempData["Success"] = "Podaci naloga su uspje�no a�urirani.";
+            TempData["Success"] = "Podaci naloga su uspješno ažurirani.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -265,7 +265,7 @@ namespace PametniParkingSistem.Controllers
             {
                 await _signInManager.RefreshSignInAsync(korisnik);
 
-                TempData["Success"] = "Profil uspje�no a�uriran.";
+                TempData["Success"] = "Profil uspješno ažuriran.";
                 return RedirectToAction(nameof(Profil));
             }
 
@@ -323,7 +323,7 @@ namespace PametniParkingSistem.Controllers
             {
                 await _signInManager.RefreshSignInAsync(korisnik);
 
-                TempData["Success"] = "Lozinka uspje�no promijenjena.";
+                TempData["Success"] = "Lozinka uspješno promijenjena.";
                 return RedirectToAction(nameof(Profil));
             }
 
@@ -384,27 +384,27 @@ namespace PametniParkingSistem.Controllers
         {
             return error.Code switch
             {
-                "DefaultError" => "Do�lo je do gre�ke. Poku�ajte ponovo.",
-                "ConcurrencyFailure" => "Do�lo je do konflikta pri spremanju podataka. Poku�ajte ponovo.",
+                "DefaultError" => "Došlo je do greške. Pokušajte ponovo.",
+                "ConcurrencyFailure" => "Došlo je do konflikta pri spremanju podataka. Pokušajte ponovo.",
                 "PasswordMismatch" => "Trenutna lozinka nije ispravna.",
                 "InvalidToken" => "Token nije ispravan.",
-                "LoginAlreadyAssociated" => "Ova prijava je ve? povezana sa drugim korisnikom.",
-                "InvalidUserName" => "Korisni?ko ime nije ispravno.",
+                "LoginAlreadyAssociated" => "Ova prijava je već povezana sa drugim korisnikom.",
+                "InvalidUserName" => "Korisničko ime nije ispravno.",
                 "InvalidEmail" => "Email adresa nije ispravna.",
-                "DuplicateUserName" => "Korisnik sa ovom email adresom ve? postoji.",
-                "DuplicateEmail" => "Korisnik sa ovom email adresom ve? postoji.",
+                "DuplicateUserName" => "Korisnik sa ovom email adresom već postoji.",
+                "DuplicateEmail" => "Korisnik sa ovom email adresom već postoji.",
                 "InvalidRoleName" => "Naziv uloge nije ispravan.",
-                "DuplicateRoleName" => "Ova uloga ve? postoji.",
-                "UserAlreadyHasPassword" => "Korisnik ve? ima postavljenu lozinku.",
-                "UserLockoutNotEnabled" => "Zaklju?avanje korisni?kog naloga nije omogu?eno.",
-                "UserAlreadyInRole" => "Korisnik ve? ima ovu ulogu.",
+                "DuplicateRoleName" => "Ova uloga već postoji.",
+                "UserAlreadyHasPassword" => "Korisnik već ima postavljenu lozinku.",
+                "UserLockoutNotEnabled" => "Zaključavanje korisničkog naloga nije omogućeno.",
+                "UserAlreadyInRole" => "Korisnik već ima ovu ulogu.",
                 "UserNotInRole" => "Korisnik nema ovu ulogu.",
                 "PasswordTooShort" => "Lozinka mora imati najmanje 6 karaktera.",
-                "PasswordRequiresNonAlphanumeric" => "Lozinka mora sadr�avati barem jedan specijalni znak.",
-                "PasswordRequiresDigit" => "Lozinka mora sadr�avati barem jedan broj.",
-                "PasswordRequiresLower" => "Lozinka mora sadr�avati barem jedno malo slovo.",
-                "PasswordRequiresUpper" => "Lozinka mora sadr�avati barem jedno veliko slovo.",
-                _ => "Do�lo je do gre�ke. Provjerite unesene podatke i poku�ajte ponovo."
+                "PasswordRequiresNonAlphanumeric" => "Lozinka mora sadržavati barem jedan specijalni znak.",
+                "PasswordRequiresDigit" => "Lozinka mora sadržavati barem jedan broj.",
+                "PasswordRequiresLower" => "Lozinka mora sadržavati barem jedno malo slovo.",
+                "PasswordRequiresUpper" => "Lozinka mora sadržavati barem jedno veliko slovo.",
+                _ => "Došlo je do greške. Provjerite unesene podatke i pokušajte ponovo."
             };
         }
     }

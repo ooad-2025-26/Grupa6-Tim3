@@ -107,7 +107,16 @@
                                class="navbar-profile-link">
                                 <span>Dobrodošli, @ime</span>
                                 <div class="profile-avatar">
-                                    <i class="fa-solid fa-user"></i>
+                                    @if (!string.IsNullOrWhiteSpace(korisnik?.ProfilnaSlikaUrl))
+                                    {
+                                        <img src="@korisnik.ProfilnaSlikaUrl"
+                                             alt="Profilna slika"
+                                             class="navbar-profile-image" />
+                                    }
+                                    else
+                                    {
+                                        <i class="fa-solid fa-user"></i>
+                                    }
                                 </div>
                             </a>
 
