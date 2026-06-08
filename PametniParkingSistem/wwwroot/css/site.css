@@ -4105,3 +4105,115 @@ span.text-danger {
         position: relative;
         z-index: 1;
     }
+
+.cancel-page {
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+.cancel-hero {
+    background: linear-gradient(135deg, #7f1d1d, #dc2626);
+    color: white;
+    border-radius: 30px;
+    padding: 42px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 24px 55px rgba(220, 38, 38, 0.18);
+    margin-bottom: 28px;
+}
+
+.cancel-badge {
+    background: rgba(255,255,255,0.18);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.cancel-hero h1 {
+    margin: 18px 0 10px;
+    font-weight: 900;
+    font-size: 44px;
+}
+
+.cancel-hero p {
+    margin: 0;
+    max-width: 650px;
+    opacity: 0.92;
+}
+
+.cancel-icon {
+    width: 95px;
+    height: 95px;
+    border-radius: 26px;
+    background: rgba(255,255,255,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+}
+
+.cancel-card {
+    background: white;
+    border-radius: 28px;
+    padding: 32px;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+    border: 1px solid #e5e7eb;
+}
+
+.cancel-warning {
+    background: #fff7ed;
+    color: #9a3412;
+    border: 1px solid #fed7aa;
+    border-radius: 18px;
+    padding: 16px 18px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-weight: 800;
+    margin-bottom: 24px;
+}
+
+.cancel-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.cancel-detail-item {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 18px;
+}
+
+    .cancel-detail-item span {
+        display: block;
+        color: #64748b;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .cancel-detail-item strong {
+        color: #0f172a;
+        font-size: 17px;
+    }
+
+.cancel-actions {
+    margin-top: 28px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+@media(max-width: 768px) {
+    .cancel-hero {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .cancel-details-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -4,41 +4,88 @@
     ViewData["Title"] = "Otkazivanje rezervacije";
 }
 
-<h1>Otkazivanje rezervacije</h1>
+<div class="cancel-page">
 
-<div class="alert alert-warning">
-    Da li ste sigurni da želite otkazati ovu rezervaciju?
+    <div class="cancel-hero">
+        <div>
+            <span class="cancel-badge">Otkazivanje rezervacije</span>
+            <h1>Jeste li sigurni?</h1>
+            <p>
+                Ova rezervacija će biti označena kao otkazana, a plaćanje će biti evidentirano kao refundirano.
+            </p>
+        </div>
+
+        <div class="cancel-icon">
+            <i class="fa-solid fa-calendar-xmark"></i>
+        </div>
+    </div>
+
+    <div class="cancel-card">
+
+        <div class="cancel-warning">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Provjerite podatke prije potvrde otkazivanja.</span>
+        </div>
+
+        <div class="cancel-details-grid">
+
+            <div class="cancel-detail-item">
+                <span>Vrijeme početka</span>
+                <strong>@Model.VrijemePocetka.ToString("dd.MM.yyyy HH:mm")</strong>
+            </div>
+
+            <div class="cancel-detail-item">
+                <span>Vrijeme kraja</span>
+                <strong>@Model.VrijemeKraja.ToString("dd.MM.yyyy HH:mm")</strong>
+            </div>
+
+            <div class="cancel-detail-item">
+                <span>Registracijske tablice</span>
+                <strong>@Model.RegistracijskeTablice</strong>
+            </div>
+
+            <div class="cancel-detail-item">
+                <span>Kontakt telefon</span>
+                <strong>@Model.KontaktTelefon</strong>
+            </div>
+
+            <div class="cancel-detail-item">
+                <span>Email</span>
+                <strong>@Model.EmailZaObavijest</strong>
+            </div>
+
+            <div class="cancel-detail-item">
+                <span>Ukupna cijena</span>
+                <strong>@Model.UkupnaCijena.ToString("0.00") KM</strong>
+            </div>
+
+            <div class="cancel-detail-item">
+                <span>Status</span>
+                <strong>@Model.StatusRezervacije</strong>
+            </div>
+
+            <div class="cancel-detail-item">
+                <span>Parking mjesto</span>
+                <strong>
+                    @(Model.ParkingMjesto != null ? Model.ParkingMjesto.Oznaka : $"Mjesto #{Model.ParkingMjestoId}")
+                </strong>
+            </div>
+
+        </div>
+
+        <form asp-action="Delete" method="post" class="cancel-actions">
+            <input type="hidden" asp-for="Id" />
+
+            <button type="submit" class="btn btn-danger btn-lg">
+                <i class="fa-solid fa-ban me-2"></i>
+                Otkaži rezervaciju
+            </button>
+
+            <a asp-action="Moje" class="btn btn-secondary btn-lg">
+                Nazad
+            </a>
+        </form>
+
+    </div>
+
 </div>
-
-<dl class="row">
-    <dt class="col-sm-3">Vrijeme početka</dt>
-    <dd class="col-sm-9">@Model.VrijemePocetka.ToString("dd.MM.yyyy HH:mm")</dd>
-
-    <dt class="col-sm-3">Vrijeme kraja</dt>
-    <dd class="col-sm-9">@Model.VrijemeKraja.ToString("dd.MM.yyyy HH:mm")</dd>
-
-    <dt class="col-sm-3">Registracijske tablice</dt>
-    <dd class="col-sm-9">@Model.RegistracijskeTablice</dd>
-
-    <dt class="col-sm-3">Kontakt telefon</dt>
-    <dd class="col-sm-9">@Model.KontaktTelefon</dd>
-
-    <dt class="col-sm-3">Email</dt>
-    <dd class="col-sm-9">@Model.EmailZaObavijest</dd>
-
-    <dt class="col-sm-3">Ukupna cijena</dt>
-    <dd class="col-sm-9">@Model.UkupnaCijena KM</dd>
-
-    <dt class="col-sm-3">Status</dt>
-    <dd class="col-sm-9">@Model.StatusRezervacije</dd>
-
-    <dt class="col-sm-3">Parking mjesto</dt>
-    <dd class="col-sm-9">@Model.ParkingMjesto?.Oznaka</dd>
-</dl>
-
-<form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="Id" />
-
-    <input type="submit" value="Otkaži rezervaciju" class="btn btn-danger" />
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
-</form>
