@@ -9,5 +9,8 @@
         public string Opis { get; set; } = string.Empty;
 
         public double ProsjecnaOcjena { get; set; }
+
+        public ICollection<ParkingMjesto> ParkingMjesta { get; set; }
+    = new List<ParkingMjesto>();
     }
 }

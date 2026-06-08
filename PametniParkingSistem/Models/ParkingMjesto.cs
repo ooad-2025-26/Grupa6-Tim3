@@ -21,5 +21,7 @@ namespace PametniParkingSistem.Models
 
         public ICollection<Rezervacija> Rezervacije { get; set; } = new List<Rezervacija>();
 
+        public ParkingZona? ParkingZona { get; set; }
+
     }
 }

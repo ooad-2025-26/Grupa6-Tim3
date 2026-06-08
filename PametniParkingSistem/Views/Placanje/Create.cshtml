@@ -6,9 +6,11 @@
 
     var rezervacija = ViewBag.Rezervacija as Rezervacija;
     var tipPlacanja = ViewBag.TipPlacanja as string ?? "NovaRezervacija";
+    var parkingMjestoNaziv = ViewBag.ParkingMjestoNaziv as string ?? $"Mjesto #{rezervacija?.ParkingMjestoId}";
 
-    double pdv = Model.Iznos * 0.17;
-    double osnovica = Model.Iznos - pdv;
+    double osnovica = Model.Iznos / 1.17;
+    double pdv = Model.Iznos - osnovica;
+
 }
 
 <div class="page-header mb-4">
@@ -121,11 +123,24 @@
                     }
                 </button>
 
-                <a asp-controller="Rezervacija"
-                       asp-action="Index"
-                       class="btn btn-outline-secondary w-100 mt-2">
-                    Nazad
-                </a>
+                @if (tipPlacanja == "NovaRezervacija" && rezervacija != null)
+                {
+                    <a asp-controller="Rezervacija"
+                           asp-action="Create"
+                           asp-route-parkingMjestoId="@rezervacija.ParkingMjestoId"
+                           class="btn btn-outline-secondary w-100 mt-2">
+                        Nazad
+                    </a>
+                }
+                else if (tipPlacanja == "Doplata" && rezervacija != null)
+                {
+                    <a asp-controller="Rezervacija"
+                           asp-action="Edit"
+                           asp-route-id="@rezervacija.Id"
+                           class="btn btn-outline-secondary w-100 mt-2">
+                        Nazad
+                    </a>
+                }
 
             </form>
 
@@ -161,7 +176,7 @@
 
                     <div class="receipt-row">
                         <span>Parking mjesto</span>
-                        <strong>@rezervacija.ParkingMjestoId</strong>
+                        <strong>@parkingMjestoNaziv</strong>
                     </div>
 
                     <div class="receipt-row">

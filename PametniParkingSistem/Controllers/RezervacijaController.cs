@@ -173,6 +173,24 @@ namespace PametniParkingSistem.Controllers
             var parkingMjesto = await _parkingMjestoService.GetByIdAsync(parkingMjestoId);
             if (parkingMjesto == null) return NotFound();
 
+            if (TempData.ContainsKey("RezervacijaZaPlacanje"))
+            {
+                var json = TempData["RezervacijaZaPlacanje"]?.ToString();
+                TempData.Keep("RezervacijaZaPlacanje");
+
+                if (!string.IsNullOrWhiteSpace(json))
+                {
+                    var sacuvanaRezervacija = JsonSerializer.Deserialize<Rezervacija>(json);
+
+                    if (sacuvanaRezervacija != null &&
+                        sacuvanaRezervacija.ParkingMjestoId == parkingMjestoId)
+                    {
+                        ViewBag.ParkingMjesto = parkingMjesto;
+                        return View(sacuvanaRezervacija);
+                    }
+                }
+            }
+
             var rezervacija = new Rezervacija
             {
                 ParkingMjestoId = parkingMjestoId,
@@ -234,10 +252,12 @@ namespace PametniParkingSistem.Controllers
             rezervacija.KorisnikId = korisnik.Id;
             rezervacija.DatumKreiranja = DateTime.Now;
             rezervacija.StatusRezervacije = StatusRezervacije.Kreirana;
-            rezervacija.UkupnaCijena = _service.IzracunajCijenu(
-                rezervacija.VrijemePocetka,
-                rezervacija.VrijemeKraja,
-                parkingMjesto.CijenaPoSatu);
+            var osnovica = _service.IzracunajCijenu(
+    rezervacija.VrijemePocetka,
+    rezervacija.VrijemeKraja,
+    parkingMjesto.CijenaPoSatu);
+
+            rezervacija.UkupnaCijena = osnovica + (osnovica * 0.17);
 
             TempData["RezervacijaZaPlacanje"] = JsonSerializer.Serialize(rezervacija);
 
@@ -290,10 +310,12 @@ namespace PametniParkingSistem.Controllers
 
             var staraCijena = postojecaRezervacija.UkupnaCijena;
 
-            var novaCijena = _service.IzracunajCijenu(
-                rezervacija.VrijemePocetka,
-                rezervacija.VrijemeKraja,
-                parkingMjesto.CijenaPoSatu);
+            var novaOsnovica = _service.IzracunajCijenu(
+          rezervacija.VrijemePocetka,
+          rezervacija.VrijemeKraja,
+          parkingMjesto.CijenaPoSatu);
+
+            var novaCijena = novaOsnovica + (novaOsnovica * 0.17);
 
             var razlikaZaDoplatu = novaCijena - staraCijena;
 

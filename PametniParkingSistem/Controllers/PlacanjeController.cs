@@ -47,6 +47,12 @@ namespace PametniParkingSistem.Controllers
 
                 var rezervacija = JsonSerializer.Deserialize<Rezervacija>(json);
 
+                var parkingMjesto = await _parkingMjestoService.GetByIdAsync(rezervacija.ParkingMjestoId);
+
+                ViewBag.ParkingMjestoNaziv = parkingMjesto != null
+                    ? $"{VratiNazivZone(parkingMjesto.ParkingZonaId)} - {parkingMjesto.Oznaka}"
+                    : $"Mjesto #{rezervacija.ParkingMjestoId}";
+
                 if (rezervacija == null)
                     return RedirectToAction("Index", "ParkingMjesto");
 
@@ -333,6 +339,18 @@ namespace PametniParkingSistem.Controllers
             </div>
         </div>
     </div>";
+        }
+
+        private string VratiNazivZone(int parkingZonaId)
+        {
+            return parkingZonaId switch
+            {
+                1 => "Zona A",
+                2 => "Zona B",
+                3 => "Zona C",
+                4 => "VIP zona",
+                _ => $"Zona #{parkingZonaId}"
+            };
         }
     }
 }
