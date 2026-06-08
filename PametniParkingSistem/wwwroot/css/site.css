@@ -4081,3 +4081,27 @@ span.text-danger {
     margin: 0 !important;
     
 }
+
+.landing-hero {
+    position: relative;
+    overflow: hidden;
+}
+
+    .landing-hero::after {
+        content: "";
+        position: absolute;
+        bottom: -60px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 600px;
+        height: 160px;
+        background: radial-gradient( ellipse, rgba(22, 163, 74, 0.22), transparent 70% );
+        filter: blur(35px);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .landing-hero > * {
+        position: relative;
+        z-index: 1;
+    }

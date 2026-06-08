@@ -19,14 +19,22 @@ namespace PametniParkingSistem.Controllers
         }
 
         public async Task<IActionResult> Index(
-            int? zonaId,
-            TipMjesta? tipMjesta,
-            bool? natkriveno,
-            double? minCijena,
-            double? maxCijena,
-            double? maxUdaljenost)
+     int? zonaId,
+     TipMjesta? tipMjesta,
+     bool? natkriveno,
+     double? minCijena,
+     double? maxCijena,
+     double? maxUdaljenost)
         {
             var parkingMjesta = await _service.GetAllAsync();
+
+            bool korisnikJePretrazivao =
+                Request.Query.ContainsKey("zonaId") ||
+                Request.Query.ContainsKey("tipMjesta") ||
+                Request.Query.ContainsKey("natkriveno") ||
+                Request.Query.ContainsKey("minCijena") ||
+                Request.Query.ContainsKey("maxCijena") ||
+                Request.Query.ContainsKey("maxUdaljenost");
 
             if (zonaId.HasValue)
                 parkingMjesta = parkingMjesta.Where(p => p.ParkingZonaId == zonaId.Value).ToList();
@@ -46,13 +54,20 @@ namespace PametniParkingSistem.Controllers
             if (maxUdaljenost.HasValue)
                 parkingMjesta = parkingMjesta.Where(p => p.UdaljenostOdUlaza <= maxUdaljenost.Value).ToList();
 
-            var preporucenoMjesto = parkingMjesta
-    .Where(p => p.Status != StatusMjesta.VanFunkcije)
-    .OrderBy(p => p.UdaljenostOdUlaza)
-    .ThenBy(p => p.CijenaPoSatu)
-    .FirstOrDefault();
+            if (korisnikJePretrazivao)
+            {
+                var preporucenoMjesto = parkingMjesta
+                    .Where(p => p.Status != StatusMjesta.VanFunkcije)
+                    .OrderBy(p => p.UdaljenostOdUlaza)
+                    .ThenBy(p => p.CijenaPoSatu)
+                    .FirstOrDefault();
 
-            ViewBag.PreporucenoMjestoId = preporucenoMjesto?.Id;
+                ViewBag.PreporucenoMjestoId = preporucenoMjesto?.Id;
+            }
+            else
+            {
+                ViewBag.PreporucenoMjestoId = null;
+            }
 
             return View(parkingMjesta);
         }
