@@ -54,13 +54,21 @@
             <h2>@Model.Oznaka</h2>
             <p>@tipText</p>
 
-            @if (Model.Status == StatusMjesta.VanFunkcije)
+            @if (Model.Status == StatusMjesta.Slobodno)
+            {
+                <span class="badge bg-success">Dostupno za rezervaciju</span>
+            }
+            else if (Model.Status == StatusMjesta.Rezervisano)
+            {
+                <span class="badge bg-warning text-dark">Rezervisano do daljnjeg</span>
+            }
+            else if (Model.Status == StatusMjesta.VanFunkcije)
             {
                 <span class="badge bg-danger">Van funkcije</span>
             }
             else
             {
-                <span class="badge bg-success">Dostupno za rezervaciju</span>
+                <span class="badge bg-secondary">@Model.Status</span>
             }
 
         </div>
@@ -115,7 +123,7 @@
                 @if (User.Identity != null
                                 && User.Identity.IsAuthenticated
                                 && User.IsInRole("RegistrovaniKorisnik")
-                                && Model.Status != StatusMjesta.VanFunkcije)
+                                && Model.Status == StatusMjesta.Slobodno)
                 {
                     <a asp-controller="Rezervacija"
                            asp-action="Create"

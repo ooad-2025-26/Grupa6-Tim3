@@ -285,7 +285,7 @@
                             @if (User.Identity != null
                                                     && User.Identity.IsAuthenticated
                                                     && User.IsInRole("RegistrovaniKorisnik")
-                                                    && item.Status != StatusMjesta.VanFunkcije)
+                                                    && item.Status == StatusMjesta.Slobodno)
                             {
                                 <a asp-controller="Rezervacija"
                                        asp-action="Create"
