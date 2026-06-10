@@ -7,7 +7,8 @@ namespace PametniParkingSistem.ViewModels.Placanje
     {
         public double Iznos { get; set; }
 
-        [Required]
+        
+        [Required(ErrorMessage = "Ime vlasnika kartice je obavezno.")]
         public string ImeVlasnikaKartice { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Broj kartice je obavezan.")]

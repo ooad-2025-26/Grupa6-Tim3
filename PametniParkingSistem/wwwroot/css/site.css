@@ -4217,3 +4217,45 @@ span.text-danger {
         grid-template-columns: 1fr;
     }
 }
+
+.parking-card.status-vanfunkcije,
+.parking-card.status-zauzeto,
+.parking-card.status-rezervisano {
+    width: 300px !important;
+    min-width: 300px !important;
+    max-width: 300px !important;
+}
+
+.parking-card.van-funkcije {
+    background: linear-gradient(135deg, #991b1b, #b91c1c);
+    border-color: #dc2626;
+}
+
+.parking-card.zauzeto,
+.parking-card.rezervisano {
+    background: linear-gradient(135deg, #c2410c, #f97316);
+    border-color: #fb923c;
+}
+
+.zone-scroll .parking-card {
+    width: 300px !important;
+    min-width: 300px !important;
+    max-width: 300px !important;
+    box-sizing: border-box !important;
+}
+
+.disabled-card {
+    background: linear-gradient(135deg, #991b1b, #b91c1c) !important;
+    color: white !important;
+}
+
+.reserved-card {
+    background: linear-gradient(135deg, #c2410c, #f97316) !important;
+    color: white !important;
+}
+
+.parking-out-service {
+    width: 100%;
+    flex-basis: 100%;
+    box-sizing: border-box;
+}

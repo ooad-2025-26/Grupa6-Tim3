@@ -216,10 +216,14 @@
                             cardClass = "vip-card";
                         }
 
-                    if (item.Status == StatusMjesta.VanFunkcije)
-                    {
-                        cardClass = "disabled-card";
-                    }
+                        if (item.Status == StatusMjesta.VanFunkcije)
+                        {
+                            cardClass = "disabled-card";
+                        }
+                        else if (item.Status == StatusMjesta.Zauzeto || item.Status == StatusMjesta.Rezervisano)
+                        {
+                            cardClass = "reserved-card";
+                        }
 
                         <div class="parking-card @cardClass @(ViewBag.PreporucenoMjestoId == item.Id ? "recommended-card" : "")">
 
@@ -298,13 +302,20 @@
                                 </span>
                             }
 
-                            @if (item.Status == StatusMjesta.VanFunkcije)
-                            {
-                                <div class="parking-out-service">
-                                    <i class="fa-solid fa-circle-exclamation me-2"></i>
-                                    Ovo parking mjesto trenutno nije u funkciji
-                                </div>
-                            }
+                                @if (item.Status == StatusMjesta.VanFunkcije)
+                                {
+                                    <div class="parking-out-service">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        Ovo parking mjesto trenutno nije u funkciji.
+                                    </div>
+                                }
+                                else if (item.Status == StatusMjesta.Zauzeto || item.Status == StatusMjesta.Rezervisano)
+                                {
+                                    <div class="parking-out-service">
+                                        <i class="fas fa-lock me-2"></i>
+                                        Parking mjesto je trajno rezervisano za posebne korisnike.
+                                    </div>
+                                }
 
                         </div>
 

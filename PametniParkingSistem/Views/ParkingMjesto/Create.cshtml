@@ -38,9 +38,14 @@
 
             <div class="col-md-6 mb-3">
                 <label asp-for="Status" class="form-label">Status mjesta</label>
-                <select asp-for="Status"
-                        class="form-select"
-                        asp-items="Html.GetEnumSelectList<StatusMjesta>()">
+                <select asp-for="Status" class="form-select">
+                    @foreach (var status in Html.GetEnumSelectList<StatusMjesta>()
+                        .Where(s => s.Text != "Zauzeto"))
+                    {
+                        <option value="@status.Value" selected="@(status.Selected ? "selected" : null)">
+                            @status.Text
+                        </option>
+                    }
                 </select>
                 <span asp-validation-for="Status" class="text-danger"></span>
                 <small class="text-muted">
