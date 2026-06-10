@@ -4,10 +4,10 @@
 
 ## Osiguraj svoje mjesto. Uštedi vrijeme. Parkiraj bez stresa.
 
-## Opis projekta: 
+## Opis projekta
 #### Pametni Parking Sistem omogućava korisnicima pregled dostupnih parking mjesta, kreiranje i upravljanje rezervacijama, online plaćanje rezervacija te primanje email obavijesti. Sistem podržava različite korisničke uloge i administraciju parking sistema.
 
-## Razvojni tim: 
+## Razvojni tim 
 ```text
 - Sara Bajrić (@sbajric2)
 - Irma Hamzić (@ihamzic1)
@@ -23,9 +23,8 @@
 
 | Uloga | Email | Lozinka |
 |--------|--------|----------|
-| Korisnik   | korisnik@gmail.com   | korisnik123   |
-| Operater   | radnik@gmail.com   | radnik123   |
-| Administrator   | admin@parking.ba   | Admin123!   |
+| Korisnik   | probnikorisnik1@gmail.com   | Korisnik123!  |
+
 
 ## Konfiguracija baze
 Konekcijski string: 
