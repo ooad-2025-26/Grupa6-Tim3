@@ -33,7 +33,23 @@ namespace PametniParkingSistem.Services
                 EnableSsl = true
             };
 
-            await client.SendMailAsync(message);
+            try
+            {
+                await client.SendMailAsync(message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("EMAIL GRESKA:");
+                Console.WriteLine(ex.ToString());
+
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine("INNER:");
+                    Console.WriteLine(ex.InnerException.ToString());
+                }
+
+                throw;
+            }
         }
     }
 }
