@@ -24,7 +24,15 @@
 | Uloga | Email | Lozinka |
 |--------|--------|----------|
 | Korisnik   | probnikorisnik1@gmail.com   | Korisnik123!  |
+| Operater   | operater@parking.ba         | Operater123!  |
+| Administrator | admin@parking.ba         | Admin123!     |
 
+## Korištene tehnologije
+
+- ASP.NET Core MVC, C# i Entity Framework Core
+- SQL Server i ASP.NET Identity
+- HTML, CSS i Bootstrap 5
+- Git i GitHub
 
 ## Konfiguracija baze
 Konekcijski string: 
